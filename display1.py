@@ -12,12 +12,25 @@ import cv2
 import os
 from PyQt5 import QtCore, QtGui, QtWidgets                     # uic
 from PyQt5.QtWidgets import (QLabel)              # +++
-from PyQt5.QtCore import QTimer, QThread
+from PyQt5.QtCore import QTimer
 from PyQt5.QtWidgets import *
 from PyQt5.QtMultimedia import *
-import imutils
 import shutil
-from test2_ui import Ui_Form                                   # +++
+from test2_ui import Ui_Form
+import numpy as np
+import time
+import imutils
+# Load Yolo
+net = cv2.dnn.readNet("yolov3-tiny_last.weights", "yolov3-tiny.cfg")
+classes = []
+with open("classes.txt", "r") as f:
+    classes = [line.strip() for line in f.readlines()]
+layer_names = net.getLayerNames()
+output_layers = [layer_names[i[0] - 1] for i in net.getUnconnectedOutLayers()]
+colors = np.random.uniform(0, 255, size=(len(classes), 3))
+font = cv2.FONT_HERSHEY_PLAIN
+starting_time = time.time()
+frame_id = 0
 
 today = date.today()
 date = datetime.datetime.now().date()
@@ -37,6 +50,7 @@ var1 = IntVar()
 c = StringVar()
 c1 = StringVar()
 logic1 = 1
+
 
 
 class Application:
@@ -776,26 +790,6 @@ class Application:
                 self.hide()
                 #self.w1()
 
-        class Thread2(QThread):
-
-            def __init__(self, *args, **kwargs):
-                super().__init__()
-                self.active = True
-
-            def run(self):
-                if self.active:
-                    self.fourcc = cv2.VideoWriter_fourcc(*'XVID')
-                    self.out1 = cv2.VideoWriter('output.avi', self.fourcc, 30, (640, 480))
-                    self.cap1 = cv2.VideoCapture(0, cv2.CAP_DSHOW)
-                    while self.active:
-                        ret1, image1 = self.cap1.read()
-                        if ret1:
-                            self.out1.write(image1)
-                        self.msleep(10)
-
-            def stop(self):
-                self.out1.release()
-
         class video(QtWidgets.QDialog, Ui_Form):
 
             def __init__(self):
@@ -805,8 +799,6 @@ class Application:
                 self.setupUi(self)  # ++
                 self.CAPTURE.clicked.connect(self.capture_image)
                 self.NEXT_3.clicked.connect(self.window2)
-                #self.NEXT_4.clicked.connect(self.change_folder)
-                #self.NEXT_5.clicked.connect(self.recoder)
 
                 # adding items to the combo box
                 self.available_cameras = QCameraInfo.availableCameras()
@@ -829,8 +821,8 @@ class Application:
             def start_webcam(self):
                 if self.cap is None:
                     self.cap = cv2.VideoCapture(0)
-                    self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 450)
-                    self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 350)
+                    self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 640)
+                    self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 480)
                 self.timer.start()
             @QtCore.pyqtSlot()
 
@@ -838,9 +830,54 @@ class Application:
                 ret, image = self.cap.read()
                 # Define the codec and create VideoWriter object
                 if ret == True:
-                    image = imutils.resize(image, width=450, height=350)
+                    image = imutils.resize(image, width=640, height=480)
+                    (H, W) = image.shape[:2]
+                    height, width, channels = image.shape
+                    # Detecting objects
+                    blob = cv2.dnn.blobFromImage(image, 0.00392, (W, H), (0, 0, 0), True, crop=False)
+                    # blob = cv2.dnn.blobFromImage(frame, 0.00392, (224, 224), (0, 0, 0), True, crop=False)
+                    net.setInput(blob)
+                    outs = net.forward(output_layers)
+                    # Showing informations on the screen
+                    class_ids = []
+                    confidences = []
+                    boxes = []
+                    for out in outs:
+                        for detection in out:
+                            scores = detection[5:]
+                            class_id = np.argmax(scores)
+                            confidence = scores[class_id]
+                            if confidence > 0.2:
+                                # Object detected
+                                center_x = int(detection[0] * width)
+                                center_y = int(detection[1] * height)
+                                w = int(detection[2] * width)
+                                h = int(detection[3] * height)
+                                # Rectangle coordinates
+                                x = int(center_x - w / 2)
+                                y = int(center_y - h / 2)
+                                boxes.append([x, y, w, h])
+                                confidences.append(float(confidence))
+                                class_ids.append(class_id)
+                    indexes = cv2.dnn.NMSBoxes(boxes, confidences, 0.4, 0.3)
+                    for i in range(len(boxes)):
+                        if i in indexes:
+                            x, y, w, h = boxes[i]
+                            label = str(classes[class_ids[i]])
+                            print(label)
+                            confidence = confidences[i]
+                            color = colors[class_ids[i]]
+                            cv2.rectangle(image, (x, y), (x + w, y + h), color, 2)
+                            cv2.rectangle(image, (x, y), (x + w, y + 30), color, -1)
+                            cv2.putText(image, label + " " + str(round(confidence, 2)), (x, y + 30), font, 3,(255, 255, 255), 3)
+
+                    elapsed_time = time.time() - starting_time
+                    fps = frame_id / elapsed_time
+                    cv2.putText(image, "FPS: " + str(round(fps, 2)), (10, 50), font, 3, (0, 0, 0), 3)
+
                     image = cv2.flip(image, 1)
                     self.displayImage(image, True)
+
                 else:
                     self.cap.release()
             @QtCore.pyqtSlot()
@@ -888,26 +925,6 @@ class Application:
                 self.w.show()
                 #self.hide()
 
-
-            # def recoder(self):
-            #     if not self.saveTimer.isActive():
-            #         # write video
-            #         self.saveTimer.start()
-            #         self.th2 = Thread2(self)
-            #         self.th2.active = True
-            #         self.th2.start()
-            #         # update control_bt text
-            #         self.NEXT_5.setText("STOP")
-            #     else:
-            #         # stop writing
-            #         self.saveTimer.stop()
-            #         self.th2.active = False
-            #         self.th2.stop()
-            #         self.th2.terminate()
-            #         # update control_bt text
-            #         self.NEXT_5.setText("START")
-
-
             def select_camera(self, i):
 
                 # getting the selected camera
@@ -930,25 +947,10 @@ class Application:
                 self.capture.imageCaptured.connect(lambda d,
                                                           i: self.status.showMessage("Image captured : "
                                                                                      + str(self.save_seq)))
-
                 # getting current camera name
                 self.current_camera_name = self.available_cameras[i].description()
-
                 # inital save sequence
                 self.save_seq = 0
-
-            # def change_folder(self):
-            #
-            #     # open the dialog to select path
-            #     path = QFileDialog.getExistingDirectory(self,"Picture Location", "")
-            #
-            #     # if path is selected
-            #     if path:
-            #         # update the path
-            #         self.save_path = path
-            #
-            #         # update the sequence
-            #         self.save_seq = 0
 
             def displayImage(self, img, window=True):
                 qformat = QtGui.QImage.Format_Indexed8

@@ -821,16 +821,18 @@ class Application:
             def start_webcam(self):
                 if self.cap is None:
                     self.cap = cv2.VideoCapture(0)
-                    self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 640)
-                    self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 480)
                 self.timer.start()
             @QtCore.pyqtSlot()
 
             def update_frame(self):
                 ret, image = self.cap.read()
                 # Define the codec and create VideoWriter object
+                #image = imutils.resize(image, width=320, height=256)
+
                 if ret == True:
-                    image = imutils.resize(image, width=640, height=480)
+                    image = cv2.resize(image, (320, 256))
+                    image = cv2.flip(image, 1)
+                    frame1 = imutils.resize(image, width=200, height=150)
                     (H, W) = image.shape[:2]
                     height, width, channels = image.shape
                     # Detecting objects
@@ -847,7 +849,7 @@ class Application:
                             scores = detection[5:]
                             class_id = np.argmax(scores)
                             confidence = scores[class_id]
-                            if confidence > 0.2:
+                            if confidence > 0.01:
                                 # Object detected
                                 center_x = int(detection[0] * width)
                                 center_y = int(detection[1] * height)
@@ -862,22 +864,43 @@ class Application:
                     indexes = cv2.dnn.NMSBoxes(boxes, confidences, 0.4, 0.3)
                     for i in range(len(boxes)):
                         if i in indexes:
-                            x, y, w, h = boxes[i]
                             label = str(classes[class_ids[i]])
-                            print(label)
-                            confidence = confidences[i]
-                            color = colors[class_ids[i]]
-                            cv2.rectangle(image, (x, y), (x + w, y + h), color, 2)
-                            cv2.rectangle(image, (x, y), (x + w, y + 30), color, -1)
-                            cv2.putText(image, label + " " + str(round(confidence, 2)), (x, y + 30), font, 3,(255, 255, 255), 3)
-
-                    elapsed_time = time.time() - starting_time
-                    fps = frame_id / elapsed_time
-                    cv2.putText(image, "FPS: " + str(round(fps, 2)), (10, 50), font, 3, (0, 0, 0), 3)
-
-                    image = cv2.flip(image, 1)
+                            #cv2.putText(image, label , (20,20), font, 2,(255, 255, 255), 2)
+                            if self.value < 8:
+                                self.value = self.value + 1
+                                conn = sqlite3.connect("db_member.db")
+                                conn.row_factory = sqlite3.Row
+                                cur = conn.cursor()
+                                cur.execute("SELECT max(id) FROM member")
+                                rows = cur.fetchall()
+                                directory = "anh/"
+                                if not os.path.exists(directory):
+                                    os.makedirs(directory)
+                                for row in rows:
+                                    print("%s" % (row["max(id)"]))
+                                cv2.imwrite('anh/%s.png' % (str(row["max(id)"]) + label + str(self.value)),frame1)
+                                # self.TEXT.setText('your Image have been Saved')
+                                self.label = QLabel(self)
+                                self.it.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "hong1")))
+                                self.it1.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "hong2")))
+                                self.it2.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "hong3")))
+                                self.it3.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "hong4")))
+                                self.it4.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "hong5")))
+                                self.it5.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "hong6")))
+                                self.it6.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "mui1")))
+                                self.it7.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "mui2")))
+                                self.it8.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "mui3")))
+                                self.it9.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "mui4")))
+                                self.it10.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "mui5")))
+                                self.it11.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "mui6")))
+                                self.it12.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "mangnhi1")))
+                                self.it13.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "mangnhi2")))
+                                self.it14.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "mangnhi3")))
+                                self.it15.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "mangnhi4")))
+                                self.it16.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "mangnhi5")))
+                                self.it17.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "mangnhi6")))
+                                self.TEXT.setText(str(row["max(id)"]) + label+ str(self.value))
                     self.displayImage(image, True)
-
                 else:
                     self.cap.release()
             @QtCore.pyqtSlot()
@@ -898,24 +921,24 @@ class Application:
                 cv2.imwrite('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.value)), frame1)
                 self.TEXT.setText('your Image have been Saved')
                 self.label = QLabel(self)
-                self.it.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a1" )))
-                self.it1.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a2")))
-                self.it2.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a3")))
-                self.it3.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a4")))
-                self.it4.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a5")))
-                self.it5.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a6")))
-                self.it6.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a7")))
-                self.it7.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a8")))
-                self.it8.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a9")))
-                self.it9.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a10")))
-                self.it10.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a11")))
-                self.it11.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a12")))
-                self.it12.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a13")))
-                self.it13.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a14")))
-                self.it14.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a15")))
-                self.it15.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a16")))
-                self.it16.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a17")))
-                self.it17.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a18")))
+                self.it.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "hong1")))
+                self.it1.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "hong2")))
+                self.it2.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "hong3")))
+                self.it3.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "hong4")))
+                self.it4.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "hong5")))
+                self.it5.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "hong6")))
+                self.it6.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "hong7")))
+                self.it7.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "mui8")))
+                self.it8.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "mui9")))
+                self.it9.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "mui10")))
+                self.it10.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "mui11")))
+                self.it11.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "mui12")))
+                self.it12.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "mangnhi13")))
+                self.it13.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "mangnhi14")))
+                self.it14.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "mangnhi15")))
+                self.it15.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "mangnhi16")))
+                self.it16.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "mangnhi17")))
+                self.it17.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "mangnhi18")))
 
                 conn.commit()
                 conn.close()

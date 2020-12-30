@@ -10,8 +10,8 @@ from fpdf import FPDF
 import webbrowser
 import cv2
 import os
-from PyQt5 import QtCore, QtGui, QtWidgets                     # uic
-from PyQt5.QtWidgets import (QLabel)              # +++
+from PyQt5 import QtCore, QtGui, QtWidgets  # uic
+from PyQt5.QtWidgets import (QLabel)  # +++
 from PyQt5.QtCore import QTimer
 from PyQt5.QtWidgets import *
 from PyQt5.QtMultimedia import *
@@ -20,10 +20,11 @@ from test2_ui import Ui_Form
 import numpy as np
 import time
 import imutils
+
 # Load Yolo
 net = cv2.dnn.readNet("yolov3-tiny_last.weights", "yolov3-tiny.cfg")
 classes = []
-with open("classes.txt", "r") as f:
+with open("classes3.txt", "r") as f:
     classes = [line.strip() for line in f.readlines()]
 layer_names = net.getLayerNames()
 output_layers = [layer_names[i[0] - 1] for i in net.getUnconnectedOutLayers()]
@@ -40,9 +41,11 @@ product_price = []
 product_quantity = []
 product_id = []
 # list for labels
-#w = root.winfo_screenwidth()
-#h = root.winfo_screenheight()f
+# w = root.winfo_screenwidth()
+# h = root.winfo_screenheight()f
 root = Tk()
+root1 = Tk()
+root2 = Tk()
 root.title("COMPANY BOSSCCOM")
 labels_list = []
 var = IntVar()
@@ -50,7 +53,6 @@ var1 = IntVar()
 c = StringVar()
 c1 = StringVar()
 logic1 = 1
-
 
 
 class Application:
@@ -72,7 +74,8 @@ class Application:
                                     bg='orange', command=self.ajax)
         self.bt_st_catalog.place(x=5, y=30)
 
-        self.bt_st_form = Button(self.left, text="Nội soi", width=16, height=4, font=('arial 14 bold'), bg='orange',command=self.endoscopy)#get_itemsdatabase)
+        self.bt_st_form = Button(self.left, text="Nội soi", width=16, height=4, font=('arial 14 bold'), bg='orange',
+                                 command=self.endoscopy)  # get_itemsdatabase)
         self.bt_st_form.place(x=5, y=136)
 
         self.bt_patient = Button(self.left, text="Biểu mẫu in", width=16, height=4, font=('arial 14 bold'), bg='orange',
@@ -86,8 +89,8 @@ class Application:
         self.bt_exit1 = Button(self.left, text="Thoát", width=16, height=4, font=('arial 14 bold'), bg='orange',
                                command=self.quit)
         self.bt_exit1.place(x=5, y=454)
-
-
+        root1.withdraw()
+        root2.withdraw()
 
     def Search(self):
         # =====================================Table WIDGET=========================================
@@ -257,9 +260,6 @@ class Application:
             self.tree.heading('Age', text="Age", anchor=W)
             self.logic1 = 2
 
-
-
-
     def Deletedata(self):
 
         conn = sqlite3.connect("db_member.db")
@@ -284,13 +284,15 @@ class Application:
         conn = sqlite3.connect("db_member.db")
         cursor = conn.cursor()
 
-        if self.logic1 == 1 or self.name_p.get() == '' or self.adr_p.get() == '' or self.y_b.get() == '' or self.jobw.get() == '' or self.stom.get() == '' or self.nbh.get() == '' or c.get() == '' or self.telw.get() == ''  :
+        if self.logic1 == 1 or self.name_p.get() == '' or self.adr_p.get() == '' or self.y_b.get() == '' or self.jobw.get() == '' or self.stom.get() == '' or self.nbh.get() == '' or c.get() == '' or self.telw.get() == '':
             tkinter.messagebox.showinfo("Error", "Điền đầy đủ thông tin bệnh nhân.")
         else:
 
-            cursor.execute('INSERT INTO member (name, address, age, job, symptom,sbh,sex,tel ) VALUES(?,?,?,?,?,?,?,?)', (
-            self.name_p.get(), self.adr_p.get(), self.y_b.get(), self.jobw.get(), self.stom.get(), self.nbh.get(),
-            c.get(),self.telw.get()))
+            cursor.execute('INSERT INTO member (name, address, age, job, symptom,sbh,sex,tel ) VALUES(?,?,?,?,?,?,?,?)',
+                           (
+                               self.name_p.get(), self.adr_p.get(), self.y_b.get(), self.jobw.get(), self.stom.get(),
+                               self.nbh.get(),
+                               c.get(), self.telw.get()))
             conn.commit()
             self.name_p.delete(0, END)
             self.adr_p.delete(0, END)
@@ -303,14 +305,13 @@ class Application:
             # textbox insert
             # tkinter.messagebox.showinfo("Success", "Successfully added to the database")
 
-
     def add_to_cart(self):
 
         self.right.destroy()
         self.bottom.destroy()
         self.bottom1.destroy()
         self.bottom2.destroy()
-        self.logic1 =1
+        self.logic1 = 1
 
     def delete_text(self, *args, **kwargs):
 
@@ -340,7 +341,7 @@ class Application:
             cursor.close()
 
     def add_to_bn(self, *args, **kwargs):
-        addWindow = Toplevel(root)
+        addWindow = Toplevel(root2)
         addWindow.title("Set form print")
         addWindow.geometry("980x500+0+0")
         self.rightw2 = Frame(addWindow, width=550, height=600, bg='lightblue')
@@ -448,7 +449,7 @@ class Application:
             cursor.close()
 
     def createNewWindow(self):
-        newWindowaddf = Toplevel(root)
+        newWindowaddf = Toplevel(root1)
         newWindowaddf.title("add infomation")
         newWindowaddf.geometry("800x500+0+0")
 
@@ -526,13 +527,16 @@ class Application:
     def quit(self):
         root.withdraw()
         root.destroy()
+        root1.destroy()
+        root2.destroy()
 
     def quit_print1(self):
 
         tkinter.messagebox.showinfo("Success", "Thoát cài đặt danh mục")
-
+        root1.destroy()
 
     def quit_print2(self):
+        root2.destroy()
         tkinter.messagebox.showinfo("Success", "Thoát cài đặt biểu mẫu")
 
     def hide(self):
@@ -553,7 +557,7 @@ class Application:
         rows = cur.fetchall()
         for row in rows:
             print("%s" % (row["id"]))
-        #webbrowser.open_new(r'doccument/%s.pdf' % ("a" + str(row["id"])))
+        # webbrowser.open_new(r'doccument/%s.pdf' % ("a" + str(row["id"])))
         webbrowser.open_new(r'doccument\%s.pdf' % ("a" + str(row["id"])))
 
     def endoscopy(self):
@@ -580,11 +584,11 @@ class Application:
                 font1 = QtGui.QFont()
                 font1.setPointSize(16)
 
-                self.text2=QtWidgets.QLabel("Chẩn Đoán : ",self)
-                self.text2.setGeometry(QtCore.QRect(90,20, 225,50))
+                self.text2 = QtWidgets.QLabel("Chẩn Đoán : ", self)
+                self.text2.setGeometry(QtCore.QRect(90, 20, 225, 50))
                 self.text2.setFont(font1)
                 self.text1 = QtWidgets.QLabel("Điều Trị : ", self)
-                self.text1.setGeometry(QtCore.QRect(90,125, 200, 50))
+                self.text1.setGeometry(QtCore.QRect(90, 125, 200, 50))
                 self.text1.setFont(font1)
 
                 self.text2 = QtWidgets.QLabel("Chỉ Định : ", self)
@@ -592,7 +596,7 @@ class Application:
                 self.text2.setFont(font1)
 
                 self.lineEdit = QtWidgets.QLineEdit(self)
-                self.lineEdit.setGeometry(QtCore.QRect(70,70, 530 , 50))
+                self.lineEdit.setGeometry(QtCore.QRect(70, 70, 530, 50))
                 self.lineEdit.setObjectName("lineEdit")
                 self.lineEdit.setPlaceholderText('chẩn đoán')
                 self.lineEdit.setFont(font)
@@ -608,8 +612,8 @@ class Application:
                 self.lineEdit_3.setObjectName("lineEdit_3")
                 self.lineEdit_3.setPlaceholderText('Chỉ định của bác sĩ')
                 self.lineEdit_3.setFont(font)
-              #  self.pushButton.move(275,420)
-                self.pushButton.clicked.connect(self.create_pdf2)#self.create_pdf2)
+                #  self.pushButton.move(275,420)
+                self.pushButton.clicked.connect(self.create_pdf2)  # self.create_pdf2)
                 self.pushButton1.clicked.connect(self.winc)
                 self.main_window()
 
@@ -618,7 +622,6 @@ class Application:
                 self.setWindowTitle(self.title)
                 self.setGeometry(self.top, self.left, self.width, self.height)
                 self.show()
-
 
             def winc(self):
                 self.hide()
@@ -743,12 +746,12 @@ class Application:
                 pdf.cell(70)
                 pdf.cell(0, 0, 'HÌNH ẢNH NỘI SOI ', ln=1)
                 #
-                file_name =  ('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(2)))
-                file_name1 = ('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(3)))
-                file_name2 = ('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(4)))
-                file_name3 = ('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(5)))
-                file_name4 = ('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(6)))
-                file_name5 = ('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(7)))
+                file_name = ('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(1)))
+                file_name1 = ('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(2)))
+                file_name2 = ('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(3)))
+                file_name3 = ('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(4)))
+                file_name4 = ('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(5)))
+                file_name5 = ('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(6)))
                 #
                 pdf.image(file_name, 12, 90, 60)
                 pdf.image(file_name1, 12, 150, 60)
@@ -762,13 +765,13 @@ class Application:
                 pdf.cell(60)
                 pdf.cell(0, 0, 'MÔ TẢ KẾT QUẢ NỘI SOI ', ln=1)
                 pdf.set_font('DejaVu', '', 12)
-                pdf.cell(0,5, ' ', ln=1)
+                pdf.cell(0, 5, ' ', ln=1)
                 pdf.cell(12)
-                pdf.cell(0, 7, 'Chẩn đoán : %s'% (shost), ln=1)
+                pdf.cell(0, 7, 'Chẩn đoán : %s' % (shost), ln=1)
                 pdf.cell(12)
-                pdf.cell(0, 7, 'Điều trị : %s'% (shost2), ln=1)
+                pdf.cell(0, 7, 'Điều trị : %s' % (shost2), ln=1)
                 pdf.cell(12)
-                pdf.cell(0, 7, 'Chỉ định bác sĩ : %s'% (shost3), ln=1)
+                pdf.cell(0, 7, 'Chỉ định bác sĩ : %s' % (shost3), ln=1)
 
                 pdf.set_x(120)
                 pdf.cell(0, 14, " Ngày " + str(today.day) + " Tháng " + str(today.month) + " Năm " + str(today.year),
@@ -781,32 +784,34 @@ class Application:
                 directory1 = "doccument/"
                 if not os.path.exists(directory1):
                     os.makedirs(directory1)
-               # pdf.output('doccument\%s.pdf' %("a" + str(row["max(id)"])))
-               # webbrowser.open_new(r'doccument\%s.pdf' %("a" + str(row["max(id)"])))
-                pdf.output('doccument/%s.pdf' % ("a" + str(row["max(id)"])))
+                pdf.output('doccument\%s.pdf' % ("a" + str(row["max(id)"])))
                 webbrowser.open_new(r'doccument\%s.pdf' % ("a" + str(row["max(id)"])))
+                #                 pdf.output('doccument/%s.pdf' % ("a" + str(row["max(id)"])))
+                #                 webbrowser.open_new(r'doccument\%s.pdf' % ("a" + str(row["max(id)"])))
                 conn.commit()
                 cur.close()
-                self.hide()
-                #self.w1()
+
+                self.winc()
 
         class video(QtWidgets.QDialog, Ui_Form):
 
             def __init__(self):
-                self.value1 = 1
+                self.value1 = 0
+                self.value2 = 0
                 super().__init__()
-                self.value = 0                 # ---
+                self.value = 0  # ---
                 self.setupUi(self)  # ++
                 self.CAPTURE.clicked.connect(self.capture_image)
                 self.NEXT_3.clicked.connect(self.window2)
 
                 # adding items to the combo box
                 self.available_cameras = QCameraInfo.availableCameras()
+                self.camera_selector.addItem("  CAMERA USB3.0")
                 self.camera_selector.addItems([camera.description()
-                                          for camera in self.available_cameras])
+                                               for camera in self.available_cameras])
                 self.camera_selector1.addItem("   Chụp Tự Động")
                 self.camera_selector1.addItem("  Chụp Thủ Công")
-                self.camera_selector.currentIndexChanged.connect(self.select_camera)
+               # self.camera_selector.stateChanged.connect(self.select_camera)
 
                 self.NEXT_7.clicked.connect(self.w1)
                 self.imgLabel.setScaledContents(True)
@@ -816,27 +821,34 @@ class Application:
                 self._image_counter = 0
                 self.start_webcam()
                 self.saveTimer = QTimer()
+                #self.item.clicked.connect(self.w1)
+                #self.item.setCheckState(True)
+                #self.TEXT.setText.setText("True" if self.item1.setCheckState() else "False")
+
+
 
             @QtCore.pyqtSlot()
             def start_webcam(self):
                 if self.cap is None:
-                    self.cap = cv2.VideoCapture(0)
+                    self.cap = cv2.VideoCapture(1)
                 self.timer.start()
-            @QtCore.pyqtSlot()
 
+            @QtCore.pyqtSlot()
             def update_frame(self):
                 ret, image = self.cap.read()
                 # Define the codec and create VideoWriter object
-                #image = imutils.resize(image, width=320, height=256)
-
+                # image = imutils.resize(image, width=320, height=256)
+                # time.sleep(2.0)
                 if ret == True:
-                    image = cv2.resize(image, (320, 256))
+                    #image =cv2.resize(image, (320, 256))
+                    image = cv2.resize(image, (640, 360))
                     image = cv2.flip(image, 1)
-                    frame1 = imutils.resize(image, width=200, height=150)
-                    (H, W) = image.shape[:2]
-                    height, width, channels = image.shape
+                    frame1 = cv2.resize(image, (320, 256))
+                    # frame1 = imutils.resize(image, width=640, height=480)
+                    #(H, W) = frame1.shape[:2]
+                    height, width, channels = frame1.shape
                     # Detecting objects
-                    blob = cv2.dnn.blobFromImage(image, 0.00392, (W, H), (0, 0, 0), True, crop=False)
+                    blob = cv2.dnn.blobFromImage(frame1, 0.00392, (416, 416), (0, 0, 0), True, crop=False)
                     # blob = cv2.dnn.blobFromImage(frame, 0.00392, (224, 224), (0, 0, 0), True, crop=False)
                     net.setInput(blob)
                     outs = net.forward(output_layers)
@@ -844,12 +856,13 @@ class Application:
                     class_ids = []
                     confidences = []
                     boxes = []
+
                     for out in outs:
                         for detection in out:
                             scores = detection[5:]
                             class_id = np.argmax(scores)
                             confidence = scores[class_id]
-                            if confidence > 0.01:
+                            if confidence > 0.4:
                                 # Object detected
                                 center_x = int(detection[0] * width)
                                 center_y = int(detection[1] * height)
@@ -865,7 +878,12 @@ class Application:
                     for i in range(len(boxes)):
                         if i in indexes:
                             label = str(classes[class_ids[i]])
-                            #cv2.putText(image, label , (20,20), font, 2,(255, 255, 255), 2)
+                            # cv2.putText(image, label , (20,20), font, 2,(255, 255, 255), 2)
+                            print(label)
+                            confidence = confidences[i]
+                            color = colors[class_ids[i]]
+                            cv2.putText(image, label + " " + str(round(confidence, 2)), (x, y + 30), font, 3,
+                                        (255, 255, 255), 3)
                             if self.value < 8:
                                 self.value = self.value + 1
                                 conn = sqlite3.connect("db_member.db")
@@ -878,36 +896,53 @@ class Application:
                                     os.makedirs(directory)
                                 for row in rows:
                                     print("%s" % (row["max(id)"]))
-                                cv2.imwrite('anh/%s.png' % (str(row["max(id)"]) + label + str(self.value)),frame1)
+                                cv2.imwrite('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.value)), frame1)
                                 # self.TEXT.setText('your Image have been Saved')
                                 self.label = QLabel(self)
-                                self.it.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "hong1")))
-                                self.it1.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "hong2")))
-                                self.it2.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "hong3")))
-                                self.it3.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "hong4")))
-                                self.it4.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "hong5")))
-                                self.it5.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "hong6")))
-                                self.it6.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "mui1")))
-                                self.it7.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "mui2")))
-                                self.it8.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "mui3")))
-                                self.it9.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "mui4")))
-                                self.it10.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "mui5")))
-                                self.it11.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "mui6")))
-                                self.it12.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "mangnhi1")))
-                                self.it13.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "mangnhi2")))
-                                self.it14.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "mangnhi3")))
-                                self.it15.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "mangnhi4")))
-                                self.it16.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "mangnhi5")))
-                                self.it17.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "mangnhi6")))
-                                self.TEXT.setText(str(row["max(id)"]) + label+ str(self.value))
+
+                                self.it.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(1))))
+                                self.it1.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(2))))
+                                self.it2.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(3))))
+                                self.it3.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(4))))
+                                self.it4.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(5))))
+                                self.it5.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(6))))
+                                self.it6.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(7))))
+                                self.it7.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(8))))
+                                self.it8.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(9))))
+                                self.it9.setIcon(
+                                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(10))))
+                                self.it10.setIcon(
+                                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(11))))
+                                self.it11.setIcon(
+                                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(12))))
+                                self.it12.setIcon(
+                                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(13))))
+                                self.it13.setIcon(
+                                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(14))))
+                                self.it14.setIcon(
+                                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(15))))
+                                self.it15.setIcon(
+                                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(16))))
+                                self.it16.setIcon(
+                                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(17))))
+                                self.it17.setIcon(
+                                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(18))))
+                                # self.TEXT.setText(str(row["max(id)"]) + label+ str(self.value))
+                                self.TEXT.setText('anh/%s.png'% (label))
+                   # elapsed_time = time.time() - starting_time
+                   # fps = frame_id / elapsed_time
+                   # cv2.putText(image, "FPS: " + str(round(fps, 2)), (10, 50), font, 3, (0, 0, 255), 3)
                     self.displayImage(image, True)
                 else:
                     self.cap.release()
+
             @QtCore.pyqtSlot()
+
             def capture_image(self):
                 flag, frame = self.cap.read()
                 frame1 = imutils.resize(frame, width=200, height=150)
-                self.value = self.value + 1
+                self.value1 = self.value1 + 1
+                cv2.putText(frame1, str(round(self.value1, 2)), (10, 50), font, 3, (250, 200, 0), 3)
                 conn = sqlite3.connect("db_member.db")
                 conn.row_factory = sqlite3.Row
                 cur = conn.cursor()
@@ -918,62 +953,62 @@ class Application:
                     os.makedirs(directory)
                 for row in rows:
                     print("%s" % (row["max(id)"]))
-                cv2.imwrite('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.value)), frame1)
+                cv2.imwrite('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.value1)), frame1)
                 self.TEXT.setText('your Image have been Saved')
                 self.label = QLabel(self)
-                self.it.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "hong1")))
-                self.it1.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "hong2")))
-                self.it2.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "hong3")))
-                self.it3.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "hong4")))
-                self.it4.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "hong5")))
-                self.it5.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "hong6")))
-                self.it6.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "hong7")))
-                self.it7.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "mui8")))
-                self.it8.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "mui9")))
-                self.it9.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "mui10")))
-                self.it10.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "mui11")))
-                self.it11.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "mui12")))
-                self.it12.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "mangnhi13")))
-                self.it13.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "mangnhi14")))
-                self.it14.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "mangnhi15")))
-                self.it15.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "mangnhi16")))
-                self.it16.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "mangnhi17")))
-                self.it17.setIcon(QtGui.QIcon('anh/%s.png' % (str(row["max(id)"]) + "mangnhi18")))
 
+                self.it.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + "1")))
+                self.it1.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + "2")))
+                self.it2.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + "3")))
+                self.it3.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + "4")))
+                self.it4.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + "5")))
+                self.it5.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + "6")))
+                self.it6.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + "7")))
+                self.it7.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + "8")))
+                self.it8.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + "9")))
+                self.it9.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + "10")))
+                self.it10.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + "11")))
+                self.it11.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + "12")))
+                self.it12.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + "13")))
+                self.it13.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + "14")))
+                self.it14.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + "15")))
+                self.it15.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + "16")))
+                self.it16.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + "17")))
+                self.it17.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + "18")))
                 conn.commit()
                 conn.close()
 
             def window2(self):  # <===
                 self.w = Window2()
                 self.w.show()
-                #self.hide()
+                # self.hide()
 
-            def select_camera(self, i):
-
-                # getting the selected camera
-                self.camera = QCamera(self.available_cameras[i])
-                # setting view finder to the camera
-                self.camera.setViewfinder(self.viewfinder)
-                # setting capture mode to the camera
-                self.camera.setCaptureMode(QCamera.CaptureStillImage)
-                # if any error occur show the alert
-                self.camera.error.connect(lambda: self.alert(self.camera.errorString()))
-                # start the camera
-                self.camera.start()
-                # creating a QCameraImageCapture object
-                self.capture = QCameraImageCapture(self.camera)
-                # showing alert if error occur
-                self.capture.error.connect(lambda error_msg, error,
-                                                  msg: self.alert(msg))
-
-                # when image captured showing message
-                self.capture.imageCaptured.connect(lambda d,
-                                                          i: self.status.showMessage("Image captured : "
-                                                                                     + str(self.save_seq)))
-                # getting current camera name
-                self.current_camera_name = self.available_cameras[i].description()
-                # inital save sequence
-                self.save_seq = 0
+            # def select_camera(self, i):
+            #
+            #     # getting the selected camera
+            #     self.camera = QCamera(self.available_cameras[i])
+            #     # setting view finder to the camera
+            #     self.camera.setViewfinder(self.viewfinder)
+            #     # setting capture mode to the camera
+            #     self.camera.setCaptureMode(QCamera.CaptureStillImage)
+            #     # if any error occur show the alert
+            #     self.camera.error.connect(lambda: self.alert(self.camera.errorString()))
+            #     # start the camera
+            #     self.camera.start()
+            #     # creating a QCameraImageCapture object
+            #     self.capture = QCameraImageCapture(self.camera)
+            #     # showing alert if error occur
+            #     self.capture.error.connect(lambda error_msg, error,
+            #                                       msg: self.alert(msg))
+            #
+            #     # when image captured showing message
+            #     self.capture.imageCaptured.connect(lambda d,
+            #                                               i: self.status.showMessage("Image captured : "
+            #                                                                          + str(self.save_seq)))
+            #     # getting current camera name
+            #     self.current_camera_name = self.available_cameras[i].description()
+            #     # inital save sequence
+            #     self.save_seq = 0
 
             def displayImage(self, img, window=True):
                 qformat = QtGui.QImage.Format_Indexed8
@@ -992,14 +1027,16 @@ class Application:
                 self.cap.release()
 
         window = video()
-        window.setGeometry(0,0, 1024, 600)
+        window.setGeometry(0, 0, 1024, 600)
         window.show()
         try:
             sys.exit(app.exec_())
         except:
             print('excitng')
 
+
 app = QApplication(sys.argv)
 root.geometry("1024x600+0+0")
 b = Application(root)
 root.mainloop()
+

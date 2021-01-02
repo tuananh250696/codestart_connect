@@ -20,6 +20,7 @@ from test2_ui import Ui_Form
 import numpy as np
 import time
 import imutils
+from PyQt5.QtCore import Qt
 
 # Load Yolo
 net = cv2.dnn.readNet("yolov3-tiny_last.weights", "yolov3-tiny.cfg")
@@ -449,7 +450,7 @@ class Application:
             cursor.close()
 
     def createNewWindow(self):
-        newWindowaddf = Toplevel(root1)
+        newWindowaddf = Toplevel(root)
         newWindowaddf.title("add infomation")
         newWindowaddf.geometry("800x500+0+0")
 
@@ -467,15 +468,15 @@ class Application:
         self.n4 = Label(self.rightw3, text="Danh Mục:", font=('arial 14 bold'), fg='black', bg='lightblue')
         self.n4.place(x=10, y=90)
 
-        self.droplist = OptionMenu(self.rightw3, c1, 'TAI', 'MŨI', 'HỌNG')
-        self.droplist.pack()
+        self.droplist1 = OptionMenu(self.rightw3, c1, 'TAI', 'MŨI', 'HỌNG')
+        self.droplist1.pack()
 
-        self.menu = self.droplist.nametowidget(self.droplist.menuname)
+        self.menu = self.droplist1.nametowidget(self.droplist1.menuname)
         self.menu.configure(font=('arial 28 bold'))
         c1.set('HỌNG')
 
-        self.droplist.config(width=16, height=2, font=('arial 18 bold'))
-        self.droplist.place(x=5, y=120)
+        self.droplist1.config(width=16, height=2, font=('arial 18 bold'))
+        self.droplist1.place(x=5, y=120)
 
         self.add_ifmt = Button(self.rightw3, text="Cập nhật", width=14, height=2, font=('arial 20 bold'), bg='orange',
                                command=self.database_print111)
@@ -512,7 +513,6 @@ class Application:
             self.tree2.insert('', 'end', values=(data))
         cursor.close()
         conn.close()
-
     def Deletedata_NewWindow(self):
         conn = sqlite3.connect("db_member.db")
         cursor = conn.cursor()
@@ -533,10 +533,10 @@ class Application:
     def quit_print1(self):
 
         tkinter.messagebox.showinfo("Success", "Thoát cài đặt danh mục")
-        root1.destroy()
+        root1.withdraw()
 
     def quit_print2(self):
-        root2.destroy()
+        root2.withdraw()
         tkinter.messagebox.showinfo("Success", "Thoát cài đặt biểu mẫu")
 
     def hide(self):
@@ -798,11 +798,19 @@ class Application:
             def __init__(self):
                 self.value1 = 0
                 self.value2 = 0
+                self.anh1 = 1
+                self.anh2 = 2
+                self.anh3 = 3
+                self.anh4 = 4
+                self.anh5 = 5
+                self.anh6 = 6
+
                 super().__init__()
                 self.value = 0  # ---
                 self.setupUi(self)  # ++
                 self.CAPTURE.clicked.connect(self.capture_image)
                 self.NEXT_3.clicked.connect(self.window2)
+
 
                 # adding items to the combo box
                 self.available_cameras = QCameraInfo.availableCameras()
@@ -821,16 +829,17 @@ class Application:
                 self._image_counter = 0
                 self.start_webcam()
                 self.saveTimer = QTimer()
+
+                self.listWidget.itemChanged.connect(self.call)
+                self.listWidget.itemSelectionChanged.connect(self.on_change)
                 #self.item.clicked.connect(self.w1)
                 #self.item.setCheckState(True)
                 #self.TEXT.setText.setText("True" if self.item1.setCheckState() else "False")
 
-
-
             @QtCore.pyqtSlot()
             def start_webcam(self):
                 if self.cap is None:
-                    self.cap = cv2.VideoCapture(1)
+                    self.cap = cv2.VideoCapture(0)
                 self.timer.start()
 
             @QtCore.pyqtSlot()
@@ -843,7 +852,7 @@ class Application:
                     #image =cv2.resize(image, (320, 256))
                     image = cv2.resize(image, (640, 360))
                     image = cv2.flip(image, 1)
-                    frame1 = cv2.resize(image, (320, 256))
+                    frame1 = cv2.resize(image, (416, 416))
                     # frame1 = imutils.resize(image, width=640, height=480)
                     #(H, W) = frame1.shape[:2]
                     height, width, channels = frame1.shape
@@ -862,7 +871,7 @@ class Application:
                             scores = detection[5:]
                             class_id = np.argmax(scores)
                             confidence = scores[class_id]
-                            if confidence > 0.4:
+                            if confidence > 0.8:
                                 # Object detected
                                 center_x = int(detection[0] * width)
                                 center_y = int(detection[1] * height)
@@ -884,7 +893,7 @@ class Application:
                             color = colors[class_ids[i]]
                             cv2.putText(image, label + " " + str(round(confidence, 2)), (x, y + 30), font, 3,
                                         (255, 255, 255), 3)
-                            if self.value < 8:
+                            if self.value < 18:
                                 self.value = self.value + 1
                                 conn = sqlite3.connect("db_member.db")
                                 conn.row_factory = sqlite3.Row
@@ -938,9 +947,12 @@ class Application:
 
             @QtCore.pyqtSlot()
 
+
+
             def capture_image(self):
                 flag, frame = self.cap.read()
                 frame1 = imutils.resize(frame, width=200, height=150)
+
                 self.value1 = self.value1 + 1
                 cv2.putText(frame1, str(round(self.value1, 2)), (10, 50), font, 3, (250, 200, 0), 3)
                 conn = sqlite3.connect("db_member.db")
@@ -982,6 +994,68 @@ class Application:
                 self.w = Window2()
                 self.w.show()
                 # self.hide()
+
+            def call(self, qList):
+                checkedItem = 0
+                for index in range(self.listWidget.count()):
+                    if self.listWidget.item(index).checkState() == Qt.Checked:
+                        checkedItem += 1
+                print(str(checkedItem))
+
+                # imn =[str(item.text()) for item in self.listWidget.selectedItems()]
+                # print(imn)
+                # print(imn[5])
+                # #self.on_change()
+
+            def on_change(self):
+                #print("start")
+                inn=str([item.text() for item in self.listWidget.selectedItems()])
+                #print(inn)
+                k=inn[2:4]
+                self.kk=int(k)
+                print(self.kk)
+                if self.kk==1:
+                    self.item.setCheckState(1)
+                if self.kk==2:
+                    self.item1.setCheckState(1)
+                if self.kk == 3:
+                    self.item2.setCheckState(1)
+                if self.kk == 4:
+                    self.item3.setCheckState(1)
+                if self.kk == 5:
+                    self.item4.setCheckState(1)
+                if self.kk == 6:
+                    self.item5.setCheckState(1)
+
+                if self.kk == 7:
+                    self.item6.setCheckState(1)
+                if self.kk == 8:
+                    self.item7.setCheckState(1)
+                if self.kk == 9:
+                    self.item8.setCheckState(1)
+                if self.kk == 10:
+                    self.item9.setCheckState(1)
+                if self.kk == 11:
+                    self.item10.setCheckState(1)
+                if self.kk == 12:
+                    self.item11.setCheckState(1)
+
+                if self.kk == 13:
+                    self.item12.setCheckState(1)
+                if self.kk == 14:
+                    self.item13.setCheckState(1)
+                if self.kk == 15:
+                    self.item14.setCheckState(1)
+                if self.kk == 16:
+                    self.item15.setCheckState(1)
+                if self.kk == 17:
+                    self.item16.setCheckState(1)
+                if self.kk == 18:
+                    self.item17.setCheckState(1)
+
+
+                # v = checkedItem + 4
+                # print(str(v))
 
             # def select_camera(self, i):
             #

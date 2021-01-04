@@ -13,14 +13,15 @@ import os
 from PyQt5 import QtCore, QtGui, QtWidgets  # uic
 from PyQt5.QtWidgets import (QLabel)  # +++
 from PyQt5.QtCore import QTimer
-from PyQt5.QtWidgets import *
 from PyQt5.QtMultimedia import *
 import shutil
 from test2_ui import Ui_Form
 import numpy as np
 import time
 import imutils
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import QDate, QSize, Qt
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
 
 # Load Yolo
 net = cv2.dnn.readNet("yolov3-tiny_last.weights", "yolov3-tiny.cfg")
@@ -45,8 +46,8 @@ product_id = []
 # w = root.winfo_screenwidth()
 # h = root.winfo_screenheight()f
 root = Tk()
-root1 = Tk()
-root2 = Tk()
+# root1 = Tk()
+# root2 = Tk()
 root.title("COMPANY BOSSCCOM")
 labels_list = []
 var = IntVar()
@@ -60,6 +61,7 @@ class Application:
     def __init__(self, master):
         self.master = master
         self.logic1 = 1
+        self.logic2 = 1
         # frame
         self.left = Frame(master, width=215, height=600, bg='white')
         self.left.pack(side=LEFT)
@@ -90,8 +92,8 @@ class Application:
         self.bt_exit1 = Button(self.left, text="Thoát", width=16, height=4, font=('arial 14 bold'), bg='orange',
                                command=self.quit)
         self.bt_exit1.place(x=5, y=454)
-        root1.withdraw()
-        root2.withdraw()
+        # root1.withdraw()
+        # root2.withdraw()
 
     def Search(self):
         # =====================================Table WIDGET=========================================
@@ -342,7 +344,8 @@ class Application:
             cursor.close()
 
     def add_to_bn(self, *args, **kwargs):
-        addWindow = Toplevel(root2)
+
+        addWindow = Toplevel(root)
         addWindow.title("Set form print")
         addWindow.geometry("980x500+0+0")
         self.rightw2 = Frame(addWindow, width=550, height=600, bg='lightblue')
@@ -371,19 +374,19 @@ class Application:
                              command=self.database_print)
         self.add_dt.place(x=10, y=260)
 
-        self.add_dl = Button(self.rightw3, text="Xóa", width=11, height=3, font=('arial 18 bold'), bg='orange',
-                             command=self.Deletedata_print)
+        self.add_dl = Button(self.rightw3, text="Thêm Icon", width=11, height=3, font=('arial 18 bold'), bg='orange')
         self.add_dl.place(x=187, y=260)
 
-        self.add_dltd = Button(self.rightw3, text="Đóng", width=11, height=3, font=('arial 18 bold'), bg='orange',
-                               command=self.quit_print2)
+        self.add_dltd = Button(self.rightw3, text="Xóa", width=11, height=3, font=('arial 18 bold'), bg='orange',
+                               command=self.Deletedata_print)#command=self.quit_print2)
         self.add_dltd.place(x=364, y=260)
 
         self.scrollbarx = Scrollbar(self.rightw2, orient=HORIZONTAL)
         self.scrollbary = Scrollbar(self.rightw2, orient=VERTICAL)
         self.tree1 = ttk.Treeview(self.rightw2, columns=("Id", "Phòng khám", "Bác sĩ", "Địa chỉ"),
                                   selectmode="extended",
-                                  height=400, yscrollcommand=self.scrollbary.set, xscrollcommand=self.scrollbarx.set)
+                                  height=400, yscrollcommand=self.scrollbary.set,
+                                  xscrollcommand=self.scrollbarx.set)
         self.scrollbary.config(command=self.tree1.yview)
         self.scrollbary.pack(side=RIGHT, fill=Y)
         self.scrollbarx.config(command=self.tree1.xview)
@@ -409,6 +412,7 @@ class Application:
             self.tree1.insert('', 'end', values=(data))
         cursor.close()
         conn.close()
+
 
     def Deletedata_print(self):
         conn = sqlite3.connect("db_member.db")
@@ -475,20 +479,20 @@ class Application:
         self.menu.configure(font=('arial 28 bold'))
         c1.set('HỌNG')
 
-        self.droplist1.config(width=16, height=2, font=('arial 18 bold'))
-        self.droplist1.place(x=5, y=120)
+        self.droplist1.config(width=15, height=3, font=('arial 18 bold'))
+        self.droplist1.place(x=5, y=140)
 
-        self.add_ifmt = Button(self.rightw3, text="Cập nhật", width=14, height=2, font=('arial 20 bold'), bg='orange',
+        self.add_ifmt = Button(self.rightw3, text="Cập nhật", width=12, height=2, font=('arial 24 bold'), bg='orange',
                                command=self.database_print111)
-        self.add_ifmt.place(x=5, y=200)
+        self.add_ifmt.place(x=5, y=250)
 
-        self.add_dltifmt = Button(self.rightw3, text="Xóa", width=14, height=2, font=('arial 20 bold'),
+        self.add_dltifmt = Button(self.rightw3, text="Xóa", width=12, height=2, font=('arial 24 bold'),
                                   bg='orange', command=self.Deletedata_NewWindow)
-        self.add_dltifmt.place(x=5, y=300)
+        self.add_dltifmt.place(x=5, y=360)
 
-        self.add_dltd = Button(self.rightw3, text="Đóng", width=14, height=2, font=('arial 20 bold'),
-                               bg='orange', command=self.quit_print1)
-        self.add_dltd.place(x=5, y=400)
+        # self.add_dltd = Button(self.rightw3, text="Đóng", width=14, height=2, font=('arial 20 bold'),
+        #                        bg='orange', command=self.quit_print1)
+        # self.add_dltd.place(x=5, y=400)
         scrollbary = Scrollbar(self.rightw2, orient=VERTICAL)
         scrollbarx = Scrollbar(self.rightw2, orient=HORIZONTAL)
         self.tree2 = ttk.Treeview(self.rightw2, columns=("Diagnostic", "Firstname"),
@@ -527,24 +531,24 @@ class Application:
     def quit(self):
         root.withdraw()
         root.destroy()
-        root1.destroy()
-        root2.destroy()
+        # root1.destroy()
+        # root2.destroy()
 
-    def quit_print1(self):
-
-        tkinter.messagebox.showinfo("Success", "Thoát cài đặt danh mục")
-        root1.withdraw()
-
-    def quit_print2(self):
-        root2.withdraw()
-        tkinter.messagebox.showinfo("Success", "Thoát cài đặt biểu mẫu")
-
-    def hide(self):
-        root.withdraw()
-
-    def show(self):
-        root.update()
-        root.deiconify()
+    # def quit_print1(self):
+    #
+    #     tkinter.messagebox.showinfo("Success", "Thoát cài đặt danh mục")
+    #     # root1.withdraw()
+    #
+    # def quit_print2(self):
+    #     # root2.withdraw()
+    #     tkinter.messagebox.showinfo("Success", "Thoát cài đặt biểu mẫu")
+    #
+    # def hide(self):
+    #     root.withdraw()
+    #
+    # def show(self):
+    #     root.update()
+    #     root.deiconify()
 
     def create_pdf1(self):
         # Set up a logo
@@ -560,24 +564,147 @@ class Application:
         # webbrowser.open_new(r'doccument/%s.pdf' % ("a" + str(row["id"])))
         webbrowser.open_new(r'doccument\%s.pdf' % ("a" + str(row["id"])))
 
+
     def endoscopy(self):
 
+
         class Window2(QMainWindow):  # <===
+
             def __init__(self):
                 super().__init__()
-
+                self.anh1 = 1
+                self.anh2 = 2
+                self.anh3 = 3
+                self.anh4 = 4
+                self.anh5 = 5
+                self.anh6 = 6
+                self.cou = 0
                 self.title = "Print Window"
                 self.top = 0
                 self.left = 0
-                self.width = 700
-                self.height = 500
+                self.width = 1000
+                self.height = 560
+                self.listWidget = QtWidgets.QListWidget(self)
+                self.listWidget.setGeometry(QtCore.QRect(680, 5, 300, 545))  # (2, 115, 213, 475))
+                self.listWidget.setObjectName("ListWidgetItem")
+                self.listWidget.setIconSize(QtCore.QSize(270, 180))
+                self.listWidget.setResizeMode(QtWidgets.QListView.Adjust)
+                self.listWidget.setFlow(QtWidgets.QListView.TopToBottom)
+
+                self.it =  QtWidgets.QListWidgetItem(self.listWidget)
+                self.it1 = QtWidgets.QListWidgetItem(self.listWidget)
+                self.it2 = QtWidgets.QListWidgetItem(self.listWidget)
+                self.it3 = QtWidgets.QListWidgetItem(self.listWidget)
+                self.it4 = QtWidgets.QListWidgetItem(self.listWidget)
+                self.it5 = QtWidgets.QListWidgetItem(self.listWidget)
+                self.it6 = QtWidgets.QListWidgetItem(self.listWidget)
+                self.it7 = QtWidgets.QListWidgetItem(self.listWidget)
+                self.it8 = QtWidgets.QListWidgetItem(self.listWidget)
+                self.it9 = QtWidgets.QListWidgetItem(self.listWidget)
+                self.it10 = QtWidgets.QListWidgetItem(self.listWidget)
+                self.it11 = QtWidgets.QListWidgetItem(self.listWidget)
+                self.it12 = QtWidgets.QListWidgetItem(self.listWidget)
+                self.it13 = QtWidgets.QListWidgetItem(self.listWidget)
+                self.it14 = QtWidgets.QListWidgetItem(self.listWidget)
+                self.it15 = QtWidgets.QListWidgetItem(self.listWidget)
+                self.it16 = QtWidgets.QListWidgetItem(self.listWidget)
+                self.it17 = QtWidgets.QListWidgetItem(self.listWidget)
+                conn = sqlite3.connect("db_member.db")
+                conn.row_factory = sqlite3.Row
+                cur = conn.cursor()
+                cur.execute("SELECT max(id) FROM member")
+                rows = cur.fetchall()
+                directory = "anh/"
+                if not os.path.exists(directory):
+                    os.makedirs(directory)
+                for row in rows:
+                    print("%s" % (row["max(id)"]))
+                font = QFont('Times', 16)
+
+                self.it.setFont(font)
+                self.it.setText("1  ")
+                self.it1.setFont(font)
+                self.it1.setText("2  ")
+                self.it2.setFont(font)
+                self.it2.setText("3  ")
+                self.it3.setFont(font)
+                self.it3.setText("4  ")
+                self.it4.setFont(font)
+                self.it4.setText("5  ")
+                self.it5.setFont(font)
+                self.it5.setText("6  ")
+                self.it6.setFont(font)
+                self.it6.setText("7  ")
+                self.it7.setFont(font)
+                self.it7.setText("8  ")
+                self.it8.setFont(font)
+                self.it8.setText("9  ")
+                self.it9.setFont(font)
+                self.it9.setText("10  ")
+                self.it10.setFont(font)
+                self.it10.setText("11  ")
+                self.it11.setFont(font)
+                self.it11.setText("12  ")
+                self.it12.setFont(font)
+                self.it12.setText("13  ")
+                self.it13.setFont(font)
+                self.it13.setText("14  ")
+                self.it14.setFont(font)
+                self.it14.setText("15  ")
+                self.it15.setFont(font)
+                self.it15.setText("16  ")
+                self.it16.setFont(font)
+                self.it16.setText("17  ")
+                self.it17.setFont(font)
+                self.it17.setText("18 ")
+
+                self.TEXT = QtWidgets.QTextBrowser(self)
+                self.TEXT.setGeometry(QtCore.QRect(100, 480, 450, 60))
+                self.TEXT.setObjectName("TEXT")
+                font1 = QFont('Times', 22)
+                self.TEXT.setFont(font1)
+                self.TEXT.setText('%s : png' % (str(self.anh1) + ":" + str(self.anh2) + ":" +  str(self.anh3)  + ":"+ str(self.anh4) + ":" + str(self.anh4) + ":" + str(self.anh5) + ":"  + str(self.anh6) ))
+
+                self.it.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(1))))
+                self.it1.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(2))))
+                self.it2.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(3))))
+                self.it3.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(4))))
+                self.it4.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(5))))
+                self.it5.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(6))))
+                self.it6.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(7))))
+                self.it7.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(8))))
+                self.it8.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(9))))
+                self.it9.setIcon(
+                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(10))))
+                self.it10.setIcon(
+                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(11))))
+                self.it11.setIcon(
+                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(12))))
+                self.it12.setIcon(
+                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(13))))
+                self.it13.setIcon(
+                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(14))))
+                self.it14.setIcon(
+                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(15))))
+                self.it15.setIcon(
+                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(16))))
+                self.it16.setIcon(
+                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(17))))
+                self.it17.setIcon(
+                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(18))))
 
                 self.pushButton = QPushButton("In Phiếu Khám", self)
-                self.pushButton.setGeometry(QtCore.QRect(130, 360, 220, 100))
+                self.pushButton.setGeometry(QtCore.QRect(80, 360, 250, 100))
                 self.pushButton.setToolTip("<h3>Start Print</h3>")
-                self.pushButton1 = QPushButton("Đóng", self)
-                self.pushButton1.setGeometry(QtCore.QRect(350, 360, 220, 100))
-                self.pushButton1.setToolTip("<h3>Close</h3>")
+
+                # self.pushButton1 = QPushButton("Chọn Ảnh Thủ Công", self)
+                # self.pushButton1.setGeometry(QtCore.QRect(250, 360, 200, 100))
+                # self.pushButton1.setToolTip("<h3>Start Print</h3>")
+
+                self.pushButton2 = QPushButton("Đóng", self)
+                self.pushButton2.setGeometry(QtCore.QRect(332, 360,250, 100))
+                self.pushButton2.setToolTip("<h3>Close</h3>")
+
 
                 font = QtGui.QFont()
                 font.setPointSize(20)
@@ -614,17 +741,68 @@ class Application:
                 self.lineEdit_3.setFont(font)
                 #  self.pushButton.move(275,420)
                 self.pushButton.clicked.connect(self.create_pdf2)  # self.create_pdf2)
-                self.pushButton1.clicked.connect(self.winc)
+                #self.pushButton1.clicked.connect(self.window3)
+                self.pushButton2.clicked.connect(self.winc)
+                #self.listWidget.itemChanged.connect(self.call)
+                self.listWidget.itemSelectionChanged.connect(self.on_change)
+                # self.listWidget.itemClicked.connect(self.call)
                 self.main_window()
 
             def main_window(self):
-
                 self.setWindowTitle(self.title)
                 self.setGeometry(self.top, self.left, self.width, self.height)
                 self.show()
 
+            def on_change(self):
+                self.cou = self.cou + 1
+
+                inn=str([item.text() for item in self.listWidget.selectedItems()])
+                #print(inn)
+                k=inn[2:4]
+                self.kk=int(k)
+                #print(self.kk)
+                #self.kk = int(k)
+                if self.cou == 1 :
+                    self.anh1 = self.kk
+                if self.cou == 2 :
+                    self.anh2 = self.kk
+                if self.cou == 3 :
+                    self.anh3 = self.kk
+                if self.cou == 4 :
+                    self.anh4 = self.kk
+                if self.cou == 5 :
+                    self.anh5 = self.kk
+                if self.cou == 6 :
+                    self.anh6 = self.kk
+                self.TEXT.setText('%s.png' % (str(self.anh1) + ":" + str(self.anh2) + ":" + str(self.anh3) + ":" + str(
+                    self.anh4) + ":" + str(self.anh4) + ":" + str(self.anh5) + ":" + str(self.anh6)))
+
+                #     print(self.kk)
+                # if self.kk==1:
+                #     self.item.setCheckState(1)
+                #     self.anh1=16
+
+            # def call(self, qList):
+            #     print(str(qList))
+            #     index = self.listWidget.indexFromItem(qList)
+
             def winc(self):
                 self.hide()
+
+            # def call(self, qList):
+            #     checkedItem = 0
+            #     for index in range(self.listWidget.count()):
+            #         if self.listWidget.item(index).checkState() == Qt.Checked:
+            #             checkedItem += 1
+            #     print(str(checkedItem))
+            #
+            #     imn = [str(item.text()) for item in self.listWidget.selectedItems()]
+            #     print(imn)
+            #     print(imn[5])
+            #     #self.on_change()
+
+
+
 
             def create_pdf2(self):
                 # Set up a logo
@@ -673,7 +851,7 @@ class Application:
                 pdf.set_font("Arial", size=12)
                 pdf.add_page()
 
-                pdf.image('demo.png', 8, 10, 25)
+                pdf.image('demo.jpg', 8, 10, 25)
                 pdf.add_font('DejaVu', '', 'DejaVuSerif-Italic.ttf', uni=True)
                 pdf.set_font('DejaVu', '', 16)
                 pdf.set_text_color(0, 70, 255)
@@ -746,12 +924,12 @@ class Application:
                 pdf.cell(70)
                 pdf.cell(0, 0, 'HÌNH ẢNH NỘI SOI ', ln=1)
                 #
-                file_name = ('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(1)))
-                file_name1 = ('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(2)))
-                file_name2 = ('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(3)))
-                file_name3 = ('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(4)))
-                file_name4 = ('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(5)))
-                file_name5 = ('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(6)))
+                file_name = ('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.anh1)))
+                file_name1 = ('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.anh2)))
+                file_name2 = ('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.anh3)))
+                file_name3 = ('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.anh4)))
+                file_name4 = ('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.anh5)))
+                file_name5 = ('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.anh6)))
                 #
                 pdf.image(file_name, 12, 90, 60)
                 pdf.image(file_name1, 12, 150, 60)
@@ -791,19 +969,13 @@ class Application:
                 conn.commit()
                 cur.close()
 
-                self.winc()
+                #self.winc()
 
         class video(QtWidgets.QDialog, Ui_Form):
 
             def __init__(self):
                 self.value1 = 0
                 self.value2 = 0
-                self.anh1 = 1
-                self.anh2 = 2
-                self.anh3 = 3
-                self.anh4 = 4
-                self.anh5 = 5
-                self.anh6 = 6
 
                 super().__init__()
                 self.value = 0  # ---
@@ -830,8 +1002,8 @@ class Application:
                 self.start_webcam()
                 self.saveTimer = QTimer()
 
-                self.listWidget.itemChanged.connect(self.call)
-                self.listWidget.itemSelectionChanged.connect(self.on_change)
+                # self.listWidget.itemChanged.connect(self.call)
+                # self.listWidget.itemSelectionChanged.connect(self.on_change)
                 #self.item.clicked.connect(self.w1)
                 #self.item.setCheckState(True)
                 #self.TEXT.setText.setText("True" if self.item1.setCheckState() else "False")
@@ -853,6 +1025,7 @@ class Application:
                     image = cv2.resize(image, (640, 360))
                     image = cv2.flip(image, 1)
                     frame1 = cv2.resize(image, (416, 416))
+                    frame2 = cv2.resize(image, (200, 150))
                     # frame1 = imutils.resize(image, width=640, height=480)
                     #(H, W) = frame1.shape[:2]
                     height, width, channels = frame1.shape
@@ -891,8 +1064,7 @@ class Application:
                             print(label)
                             confidence = confidences[i]
                             color = colors[class_ids[i]]
-                            cv2.putText(image, label + " " + str(round(confidence, 2)), (x, y + 30), font, 3,
-                                        (255, 255, 255), 3)
+                            cv2.putText(image, label + " " + str(round(confidence, 2)), (x, y + 30), font, 3,(255, 255, 255), 3)
                             if self.value < 18:
                                 self.value = self.value + 1
                                 conn = sqlite3.connect("db_member.db")
@@ -905,7 +1077,7 @@ class Application:
                                     os.makedirs(directory)
                                 for row in rows:
                                     print("%s" % (row["max(id)"]))
-                                cv2.imwrite('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.value)), frame1)
+                                cv2.imwrite('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.value)), frame2)
                                 # self.TEXT.setText('your Image have been Saved')
                                 self.label = QLabel(self)
 
@@ -947,11 +1119,9 @@ class Application:
 
             @QtCore.pyqtSlot()
 
-
-
             def capture_image(self):
                 flag, frame = self.cap.read()
-                frame1 = imutils.resize(frame, width=200, height=150)
+                frame1 = imutils.resize(frame, width=240, height=170)
 
                 self.value1 = self.value1 + 1
                 cv2.putText(frame1, str(round(self.value1, 2)), (10, 50), font, 3, (250, 200, 0), 3)
@@ -995,63 +1165,64 @@ class Application:
                 self.w.show()
                 # self.hide()
 
-            def call(self, qList):
-                checkedItem = 0
-                for index in range(self.listWidget.count()):
-                    if self.listWidget.item(index).checkState() == Qt.Checked:
-                        checkedItem += 1
-                print(str(checkedItem))
-
-                # imn =[str(item.text()) for item in self.listWidget.selectedItems()]
-                # print(imn)
-                # print(imn[5])
-                # #self.on_change()
-
-            def on_change(self):
-                #print("start")
-                inn=str([item.text() for item in self.listWidget.selectedItems()])
-                #print(inn)
-                k=inn[2:4]
-                self.kk=int(k)
-                print(self.kk)
-                if self.kk==1:
-                    self.item.setCheckState(1)
-                if self.kk==2:
-                    self.item1.setCheckState(1)
-                if self.kk == 3:
-                    self.item2.setCheckState(1)
-                if self.kk == 4:
-                    self.item3.setCheckState(1)
-                if self.kk == 5:
-                    self.item4.setCheckState(1)
-                if self.kk == 6:
-                    self.item5.setCheckState(1)
-
-                if self.kk == 7:
-                    self.item6.setCheckState(1)
-                if self.kk == 8:
-                    self.item7.setCheckState(1)
-                if self.kk == 9:
-                    self.item8.setCheckState(1)
-                if self.kk == 10:
-                    self.item9.setCheckState(1)
-                if self.kk == 11:
-                    self.item10.setCheckState(1)
-                if self.kk == 12:
-                    self.item11.setCheckState(1)
-
-                if self.kk == 13:
-                    self.item12.setCheckState(1)
-                if self.kk == 14:
-                    self.item13.setCheckState(1)
-                if self.kk == 15:
-                    self.item14.setCheckState(1)
-                if self.kk == 16:
-                    self.item15.setCheckState(1)
-                if self.kk == 17:
-                    self.item16.setCheckState(1)
-                if self.kk == 18:
-                    self.item17.setCheckState(1)
+            # def call(self, qList):
+            #     checkedItem = 0
+            #     for index in range(self.listWidget.count()):
+            #         if self.listWidget.item(index).checkState() == Qt.Checked:
+            #             checkedItem += 1
+            #     print(str(checkedItem))
+            #
+            #     # imn =[str(item.text()) for item in self.listWidget.selectedItems()]
+            #     # print(imn)
+            #     # print(imn[5])
+            #     # #self.on_change()
+            #
+            # def on_change(self):
+            #     #print("start")
+            #     inn=str([item.text() for item in self.listWidget.selectedItems()])
+            #     #print(inn)
+            #     k=inn[2:4]
+            #     self.kk=int(k)
+            #     print(self.kk)
+            #     if self.kk==1:
+            #         self.item.setCheckState(1)
+            #         self.anh1=16
+            #     if self.kk==2:
+            #         self.item1.setCheckState(1)
+            #     if self.kk == 3:
+            #         self.item2.setCheckState(1)
+            #     if self.kk == 4:
+            #         self.item3.setCheckState(1)
+            #     if self.kk == 5:
+            #         self.item4.setCheckState(1)
+            #     if self.kk == 6:
+            #         self.item5.setCheckState(1)
+            #
+            #     if self.kk == 7:
+            #         self.item6.setCheckState(1)
+            #     if self.kk == 8:
+            #         self.item7.setCheckState(1)
+            #     if self.kk == 9:
+            #         self.item8.setCheckState(1)
+            #     if self.kk == 10:
+            #         self.item9.setCheckState(1)
+            #     if self.kk == 11:
+            #         self.item10.setCheckState(1)
+            #     if self.kk == 12:
+            #         self.item11.setCheckState(1)
+            #
+            #     if self.kk == 13:
+            #         self.item12.setCheckState(1)
+            #     if self.kk == 14:
+            #         self.item13.setCheckState(1)
+            #     if self.kk == 15:
+            #         self.item14.setCheckState(1)
+            #     if self.kk == 16:
+            #         self.item15.setCheckState(1)
+            #     if self.kk == 17:
+            #         self.item16.setCheckState(1)
+            #     if self.kk == 18:
+            #         self.item17.setCheckState(1)
 
 
                 # v = checkedItem + 4

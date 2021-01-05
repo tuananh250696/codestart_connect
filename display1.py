@@ -370,16 +370,23 @@ class Application:
         self.n2_p = Entry(self.rightw3, font=('arial 18 bold'), width=30)
         self.n2_p.place(x=150, y=150)
 
+        self.addrn = Label(self.rightw3, text="Icon Addr:", font=('arial 16 bold'), fg='black', bg='lightblue')
+        self.addrn.place(x=10, y=215)
+
+        self.addrn_p = Entry(self.rightw3, font=('arial 18 bold'), width=30)
+        self.addrn_p.place(x=150, y=215)
+
         self.add_dt = Button(self.rightw3, text="Cập nhật", width=11, height=3, font=('arial 18 bold'), bg='orange',
                              command=self.database_print)
-        self.add_dt.place(x=10, y=260)
+        self.add_dt.place(x=10, y=300)
 
-        self.add_dl = Button(self.rightw3, text="Thêm Icon", width=11, height=3, font=('arial 18 bold'), bg='orange')
-        self.add_dl.place(x=187, y=260)
+        self.add_dl = Button(self.rightw3, text="Thêm Icon", width=11, height=3, font=('arial 18 bold'),
+                             bg='orange',command=self.openfile)
+        self.add_dl.place(x=187, y=300)
 
         self.add_dltd = Button(self.rightw3, text="Xóa", width=11, height=3, font=('arial 18 bold'), bg='orange',
-                               command=self.Deletedata_print)#command=self.quit_print2)
-        self.add_dltd.place(x=364, y=260)
+                               command=self.Deletedata_print)  # command=self.quit_print2)
+        self.add_dltd.place(x=364, y=300)
 
         self.scrollbarx = Scrollbar(self.rightw2, orient=HORIZONTAL)
         self.scrollbary = Scrollbar(self.rightw2, orient=VERTICAL)
@@ -449,6 +456,25 @@ class Application:
             cursor.execute('CREATE TABLE IF NOT EXISTS print_dt22 (name_pk22 TEXT,dt_name22 TEXT)')
             cursor.execute('INSERT INTO print_dt22 (name_pk22,dt_name22) VALUES(?,?)',
                            (nameadd22, name_dt22))
+           # tkinter.messagebox.showinfo("Success", "Đã thêm thông tin")
+            conn.commit()
+            cursor.close()
+
+    def openfile(self):  # open the file\
+        # namepk = self.adr2_p.get()
+        # name_dt = self.doctor_p.get()
+        # address_pk = self.n2_p.get()
+
+        address_addrn = self.addrn_p.get()
+        conn = sqlite3.connect("db_member.db")
+        cursor = conn.cursor()
+        if address_addrn == '':
+            tkinter.messagebox.showinfo("Error", "Điền đầy đủ thông tin.")
+        else:
+            cursor.execute("DELETE FROM print_dtadd WHERE addressadd=1")
+            cursor.execute('CREATE TABLE IF NOT EXISTS print_dtadd (name_pkadd TEXT,dt_nameadd TEXT)')
+            cursor.execute('INSERT INTO print_dtadd (name_pkadd,dt_nameadd) VALUES(?,?)',
+                           (address_addrn, address_addrn))
             tkinter.messagebox.showinfo("Success", "Đã thêm thông tin")
             conn.commit()
             cursor.close()
@@ -663,7 +689,7 @@ class Application:
                 self.TEXT.setObjectName("TEXT")
                 font1 = QFont('Times', 22)
                 self.TEXT.setFont(font1)
-                self.TEXT.setText('%s : png' % (str(self.anh1) + ":" + str(self.anh2) + ":" +  str(self.anh3)  + ":"+ str(self.anh4) + ":" + str(self.anh4) + ":" + str(self.anh5) + ":"  + str(self.anh6) ))
+                self.TEXT.setText('%s : png' % (str(self.anh1) + ":" + str(self.anh2) + ":" +  str(self.anh3)  + ":" + str(self.anh4) + ":" + str(self.anh5) + ":"  + str(self.anh6) ))
 
                 self.it.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(1))))
                 self.it1.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(2))))
@@ -774,8 +800,10 @@ class Application:
                     self.anh5 = self.kk
                 if self.cou == 6 :
                     self.anh6 = self.kk
-                self.TEXT.setText('%s.png' % (str(self.anh1) + ":" + str(self.anh2) + ":" + str(self.anh3) + ":" + str(
-                    self.anh4) + ":" + str(self.anh4) + ":" + str(self.anh5) + ":" + str(self.anh6)))
+                self.TEXT.setText('%s.png' % (str(self.anh1) + ":" + str(self.anh2) + ":" + str(self.anh3) + ":" + str(self.anh4)  + ":" + str(self.anh5) + ":" + str(self.anh6)))
+
+                if self.cou > 6:
+                    self.cou = 0
 
                 #     print(self.kk)
                 # if self.kk==1:
@@ -826,11 +854,15 @@ class Application:
                 cur4.execute("SELECT dt_name FROM print_dt")
                 cur5 = conn.cursor()
                 cur5.execute("SELECT * FROM `member`")
+                cur6 = conn.cursor()
+                cur6.execute("SELECT name_pkadd FROM print_dtadd")
 
+                rows6 = cur6.fetchall()
                 rows5 = cur5.fetchall()
                 rows4 = cur4.fetchall()
                 rows3 = cur3.fetchall()
                 rows2 = cur2.fetchall()
+
 
                 for row5 in rows5:
                     row5[6]
@@ -843,15 +875,20 @@ class Application:
                 for row4 in rows4:
                     row4["dt_name"]
 
+                for row6 in rows6:
+                    row6["name_pkadd"]
+
+
                 t = row2["name_pk"]
                 t1 = row3["address"]
                 t2 = "BS: " + row4["dt_name"]
+                t3 = row6["name_pkadd"]
 
                 pdf = FPDF()
                 pdf.set_font("Arial", size=12)
                 pdf.add_page()
 
-                pdf.image('demo.jpg', 8, 10, 25)
+                pdf.image(t3, 8, 6, 25)
                 pdf.add_font('DejaVu', '', 'DejaVuSerif-Italic.ttf', uni=True)
                 pdf.set_font('DejaVu', '', 16)
                 pdf.set_text_color(0, 70, 255)

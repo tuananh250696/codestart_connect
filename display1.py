@@ -19,7 +19,7 @@ from test2_ui import Ui_Form
 import numpy as np
 import time
 import imutils
-from PyQt5.QtCore import QDate, QSize, Qt
+from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
@@ -347,7 +347,7 @@ class Application:
 
         addWindow = Toplevel(root)
         addWindow.title("Set form print")
-        addWindow.geometry("980x500+0+0")
+        addWindow.geometry("980x550+0+0")
         self.rightw2 = Frame(addWindow, width=550, height=600, bg='lightblue')
         self.rightw2.pack(side=RIGHT)
         self.rightw3 = Frame(addWindow, width=600, height=600, bg='lightblue')
@@ -355,38 +355,38 @@ class Application:
 
         self.adr2 = Label(self.rightw3, text="Phòng khám:", font=('arial 16 bold'), fg='black', bg='lightblue')
         self.adr2.place(x=10, y=10)
-        self.adr2_p = Entry(self.rightw3, font=('arial 18 bold'), width=30)
+        self.adr2_p = Entry(self.rightw3, font=('arial 20 bold'), width=26)
         self.adr2_p.place(x=150, y=10)
 
         self.doctor = Label(self.rightw3, text=" Bác sĩ :", font=('arial 16 bold'), fg='black', bg='lightblue')
         self.doctor.place(x=10, y=85)
 
-        self.doctor_p = Entry(self.rightw3, font=('arial 18 bold'), width=30)
+        self.doctor_p = Entry(self.rightw3, font=('arial 20 bold'), width=26)
         self.doctor_p.place(x=150, y=75)
 
         self.n2 = Label(self.rightw3, text="Địa chỉ:", font=('arial 16 bold'), fg='black', bg='lightblue')
-        self.n2.place(x=10, y=150)
+        self.n2.place(x=10, y=155)
 
-        self.n2_p = Entry(self.rightw3, font=('arial 18 bold'), width=30)
+        self.n2_p = Entry(self.rightw3, font=('arial 20 bold'), width=26)
         self.n2_p.place(x=150, y=150)
 
-        self.addrn = Label(self.rightw3, text="Icon Addr:", font=('arial 16 bold'), fg='black', bg='lightblue')
-        self.addrn.place(x=10, y=215)
-
-        self.addrn_p = Entry(self.rightw3, font=('arial 18 bold'), width=30)
-        self.addrn_p.place(x=150, y=215)
-
-        self.add_dt = Button(self.rightw3, text="Cập nhật", width=11, height=3, font=('arial 18 bold'), bg='orange',
+        self.add_dt = Button(self.rightw3, text="Cập nhật", width=15, height=3, font=('arial 18 bold'), bg='orange',
                              command=self.database_print)
-        self.add_dt.place(x=10, y=300)
+        self.add_dt.place(x=40, y=220)
 
-        self.add_dl = Button(self.rightw3, text="Thêm Icon", width=11, height=3, font=('arial 18 bold'),
-                             bg='orange',command=self.openfile)
-        self.add_dl.place(x=187, y=300)
-
-        self.add_dltd = Button(self.rightw3, text="Xóa", width=11, height=3, font=('arial 18 bold'), bg='orange',
+        self.add_dltd = Button(self.rightw3, text="Xóa", width=15, height=3, font=('arial 18 bold'), bg='orange',
                                command=self.Deletedata_print)  # command=self.quit_print2)
-        self.add_dltd.place(x=364, y=300)
+        self.add_dltd.place(x=280, y=220)
+
+        self.addrn = Label(self.rightw3, text="Icon Addr:", font=('arial 18 bold'), fg='black', bg='lightblue')
+        self.addrn.place(x=10, y=360)
+
+        self.addrn_p = Entry(self.rightw3, font=('arial 22 bold'), width=25)
+        self.addrn_p.place(x=130, y=360)
+
+        self.add_dl = Button(self.rightw3, text="Thêm Icon", width=15, height=3, font=('arial 18 bold'),
+                             bg='orange', command=self.openfile)
+        self.add_dl.place(x=165, y=410)
 
         self.scrollbarx = Scrollbar(self.rightw2, orient=HORIZONTAL)
         self.scrollbary = Scrollbar(self.rightw2, orient=VERTICAL)
@@ -444,7 +444,7 @@ class Application:
         cursor.close()
 
     def database_print111(self):
-        nameadd22 = c1.get()
+        nameadd22 = c1.get() + " " +self.ad_if2.get()
         name_dt22 = self.ad_if2.get()
 
         conn = sqlite3.connect("db_member.db")
@@ -565,8 +565,8 @@ class Application:
         self.tree2.heading('Danh Mục', text="Danh Mục", anchor=W)
         self.tree2.heading('Chẩn Đoán', text="Chẩn Đoán", anchor=W)
         self.tree2.column('#0', stretch=NO, minwidth=0, width=0)
-        self.tree2.column('#1', stretch=NO, minwidth=0, width=50)
-        self.tree2.column('#2', stretch=NO, minwidth=0, width=150)
+        self.tree2.column('#1', stretch=NO, minwidth=0, width=200)
+        self.tree2.column('#2', stretch=NO, minwidth=0, width=0)
         self.tree2.pack()
 
         scrollbary = Scrollbar(self.rightw4, orient=VERTICAL)
@@ -706,7 +706,7 @@ class Application:
                 rows2 = cur2.fetchall()
                 for row2 in rows2:
                     row2["name_j22"]
-                    print("%s" % (row2["name_j22"]))
+                    # print("%s" % (row2["name_j22(1)"]))
                 # completer = QCompleter(row2["name_j22"])
                 directory = "anh/"
                 if not os.path.exists(directory):
@@ -827,6 +827,11 @@ class Application:
                 # self.lineEdit.setCompleter(completer)
                 self.lineEdit.setFont(font)
 
+                self.completer = QCompleter()
+                self.lineEdit.setCompleter(self.completer)
+                self.model = QStringListModel()
+                self.completer.setModel(self.model)
+
                 self.lineEdit_2 = QtWidgets.QLineEdit(self)
                 self.lineEdit_2.setGeometry(QtCore.QRect(70, 170, 530, 50))
                 self.lineEdit_2.setObjectName("lineEdit_2")
@@ -846,11 +851,22 @@ class Application:
                 self.listWidget.itemSelectionChanged.connect(self.on_change)
                 # self.listWidget.itemClicked.connect(self.call)
                 self.main_window()
+                self.get_data()
 
             def main_window(self):
                 self.setWindowTitle(self.title)
                 self.setGeometry(self.top, self.left, self.width, self.height)
                 self.show()
+
+            def get_data(self):
+                conn = sqlite3.connect("db_member.db")
+                c = conn.cursor()
+                c.execute(" SELECT name_pk22 FROM print_dt22")
+                results = c.fetchall()
+                new_list = [i[0] for i in results]
+                #print(new_list)  # Test print
+                self.model.setStringList(new_list)  # From here up I was able to get the
+                # code to work but there's no auto completion in the QLineEdit.
 
             def on_change(self):
                 self.cou = self.cou + 1

@@ -56,51 +56,92 @@ var1 = IntVar()
 c = StringVar()
 c1 = StringVar()
 logic1 = 1
+USERNAME = StringVar()
+PASSWORD = StringVar()
 
 
 class Application:
     def __init__(self, master):
-        self.master = master
-        self.logic1 = 1
-        self.logic2 = 1
-        # frame
-        self.left = Frame(master, width=215, height=600, bg='white')
-        self.left.pack(side=LEFT)
-        # components
-        self.date_l = Label(self.left,
-                            text="Today's Date: " + str(today.day) + "-" + str(today.month) + "-" + str(today.year),
-                            font=('arial 12 bold'), bg='lightblue',
-                            fg='white')
-        self.date_l.place(x=10, y=0)
+        connkey = sqlite3.connect("d.db")
+        cursorkey = connkey.cursor()
+        # cursorkey.execute(
+        #     "CREATE TABLE IF NOT EXISTS `member` (mem_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, username TEXT, password TEXT, firstname TEXT, lastname TEXT)")
+        # self.leftkey = Frame(master,width=1000, height=550, bg='lightblue')
+        # self.leftkey.pack(side=LEFT)
+        # self.LABELKEY = Label( self.leftkey, text="WELL COME TO DEVICE BOSSCOM - INPUT KEY ACTIVE", font=('arial 20 bold'), fg='black',bg='lightblue')
+        # self.LABELKEY.place(x=150, y=60)
+        #
+        # self.LABELKEY1 = Label(self.leftkey, text="Mã ID THIẾT BỊ:",
+        #                       font=('arial 28 bold'), fg='black', bg='lightblue')
+        # self.LABELKEY1.place(x=120, y=110)
+        #
+        # self.name_key = Entry(self.leftkey, font=('arial 26 bold'), width=40)
+        # self.name_key.place(x=150, y=160)
+        #
+        # self.LABELKEY2 = Label(self.leftkey, text="ĐỊA CHỈ EMAIL:",
+        #                        font=('arial 28 bold'), fg='black', bg='lightblue')
+        # self.LABELKEY2.place(x=120, y=230)
+        # self.mail= Entry(self.leftkey, font=('arial 26 bold'), width=40)
+        # self.mail.place(x=150, y=280)
+        #
+        #
+        # self.LABELKEY3 = Label(self.leftkey, text="KEY ACTICE:",
+        #                        font=('arial 28 bold'), fg='black', bg='lightblue')
+        # self.LABELKEY3.place(x=120, y=380)
+        # self.name_keyK = Entry(self.leftkey, font=('arial 26 bold'), width=40)
+        # self.name_keyK.place(x=150, y=430)
+        USERNAME="admin1"
 
-        # button
-        self.bt_st_catalog = Button(self.left, text="Hồ sơ bệnh nhân", width=16, height=4, font=('arial 14 bold'),
-                                    bg='orange', command=self.ajax)
-        self.bt_st_catalog.place(x=5, y=30)
+        cursorkey.execute("SELECT * FROM `member` WHERE `username` = ? and `password` = ?",( USERNAME, USERNAME))
+        if cursorkey.fetchone() is not None:
+            self.master = master
+            self.logic1 = 1
+            self.logic2 = 1
+            # frame
+            self.left = Frame(master, width=215, height=600, bg='white')
+            self.left.pack(side=LEFT)
+            # components
+            self.date_l = Label(self.left,
+                                text="Today's Date: " + str(today.day) + "-" + str(today.month) + "-" + str(today.year),
+                                font=('arial 12 bold'), bg='lightblue',
+                                fg='white')
+            self.date_l.place(x=10, y=0)
 
-        self.bt_st_form = Button(self.left, text="Nội soi", width=16, height=4, font=('arial 14 bold'), bg='orange',
-                                 command=self.endoscopy)  # get_itemsdatabase)
-        self.bt_st_form.place(x=5, y=136)
+            # button
+            self.bt_st_catalog = Button(self.left, text="Hồ sơ bệnh nhân", width=16, height=4, font=('arial 14 bold'),
+                                        bg='orange', command=self.ajax)
+            self.bt_st_catalog.place(x=5, y=30)
 
-        self.bt_patient = Button(self.left, text="Biểu mẫu in", width=16, height=4, font=('arial 14 bold'), bg='orange',
-                                 command=self.add_to_bn)
-        self.bt_patient.place(x=5, y=242)
+            self.bt_st_form = Button(self.left, text="Nội soi", width=16, height=4, font=('arial 14 bold'), bg='orange',
+                                     command=self.endoscopy)  # get_itemsdatabase)
+            self.bt_st_form.place(x=5, y=136)
 
-        self.bt_endoscop = Button(self.left, text="Danh mục khám", width=16, height=4, font=('arial 14 bold'),
-                                  bg='orange', command=self.createNewWindow)
-        self.bt_endoscop.place(x=5, y=348)
+            self.bt_patient = Button(self.left, text="Biểu mẫu in", width=16, height=4, font=('arial 14 bold'),
+                                     bg='orange',
+                                     command=self.add_to_bn)
+            self.bt_patient.place(x=5, y=242)
 
-        self.bt_exit1 = Button(self.left, text="Thoát", width=16, height=4, font=('arial 14 bold'), bg='orange',
-                               command=self.quit)
-        self.bt_exit1.place(x=5, y=454)
-        # root1.withdraw()
-        # root2.withdraw()
-        # self.get_id()
+            self.bt_endoscop = Button(self.left, text="Danh mục khám", width=16, height=4, font=('arial 14 bold'),
+                                      bg='orange', command=self.createNewWindow)
+            self.bt_endoscop.place(x=5, y=348)
 
-    # def get_id(self):
-    # #     return subprocess.Popen('hal-get-property --udi /org/freedesktop/Hal/devices/computer --key system.hardware.uuid'.split())
-    # def get_id(self):
-    #     return subprocess.Popen('dmidecode.exe -s system-uuid'.split())
+            self.bt_exit1 = Button(self.left, text="Thoát", width=16, height=4, font=('arial 14 bold'), bg='orange',
+                                   command=self.quit)
+            self.bt_exit1.place(x=5, y=454)
+        else:
+
+            self.leftkey = Frame(root, width=1000, height=550, bg='lightblue')
+            self.leftkey.pack(side=LEFT)
+            self.LABELKEY = Label(self.leftkey, text="XIN VUI LÒNG ĐIỀN MÃ ACTICE TRƯỚC KHI SỬ DỤNG",
+                                  font=('arial 24 bold'), fg='red', bg='lightblue')
+            self.LABELKEY.place(x=50, y=250)
+            self.LABELKEY22 = Label(self.leftkey, text="LIỆN HỆ TRỢ GIÚP : BOSSCOM COMPANY",
+                                  font=('arial 16 bold'), fg='red', bg='lightblue')
+            self.LABELKEY22.place(x=120, y=300)
+
+
+        # self.name_key.focus()
+      #  self.LoginForm()
 
     def Search(self):
         # =====================================Table WIDGET=========================================
@@ -1138,13 +1179,13 @@ class Application:
                 self.NEXT_3.clicked.connect(self.window2)
 
 
-                # adding items to the combo box
+                # # adding items to the combo box
                 # self.available_cameras = QCameraInfo.availableCameras()
-                # self.camera_selector.addItem("  CAMERA USB3.0")
+                self.camera_selector.addItem("  CAMERA USB3.0")
                 # self.camera_selector.add Items([camera.description()
                 #                                for camera in self.available_cameras])
-                # self.camera_selector1.addItem("   Chụp Tự Động")
-                # self.camera_selector1.addItem("  Chụp Thủ Công")
+                self.camera_selector1.addItem("   Chụp Tự Động")
+                self.camera_selector1.addItem("  Chụp Thủ Công")
                # self.camera_selector.stateChanged.connect(self.select_camera)
 
                 self.NEXT_7.clicked.connect(self.w1)

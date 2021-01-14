@@ -13,7 +13,7 @@ import os
 from PyQt5 import QtCore, QtGui, QtWidgets  # uic
 from PyQt5.QtWidgets import (QLabel)  # +++
 from PyQt5.QtCore import QTimer
-from PyQt5.QtMultimedia import *
+# from PyQt5.QtMultimedia import *
 import shutil
 from test2_ui import Ui_Form
 import numpy as np
@@ -22,6 +22,7 @@ import imutils
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
+import subprocess
 
 # Load Yolo
 net = cv2.dnn.readNet("yolov3-tiny_last.weights", "yolov3-tiny.cfg")
@@ -94,6 +95,12 @@ class Application:
         self.bt_exit1.place(x=5, y=454)
         # root1.withdraw()
         # root2.withdraw()
+        # self.get_id()
+
+    # def get_id(self):
+    # #     return subprocess.Popen('hal-get-property --udi /org/freedesktop/Hal/devices/computer --key system.hardware.uuid'.split())
+    # def get_id(self):
+    #     return subprocess.Popen('dmidecode.exe -s system-uuid'.split())
 
     def Search(self):
         # =====================================Table WIDGET=========================================
@@ -536,7 +543,7 @@ class Application:
                                command=self.database_print111)
         self.add_ifmt.place(x=5, y=90)
 
-        self.n4 = Label(self.rightw3, text="Nghề Nghiệp Bệnh Nhân:", font=('arial 14 bold'), fg='black', bg='lightblue')
+        self.n4 = Label(self.rightw3, text="Phương Pháp Điều Trị:", font=('arial 14 bold'), fg='black', bg='lightblue')
         self.n4.place(x=10, y=185)
 
         self.ad_j2 = Entry(self.rightw3, font=('arial 28 bold'), width=24)
@@ -700,14 +707,18 @@ class Application:
                 cur = conn.cursor()
                 cur.execute("SELECT max(id) FROM member")
                 rows = cur.fetchall()
+                # INSERT
+                # INTO
+                # print_jb22(name_j22, dt_namej)
+                # VALUES(?, ?)
 
-                cur2 = conn.cursor()
-                cur2.execute("SELECT name_j22 FROM print_jb22")
-                rows2 = cur2.fetchall()
-                for row2 in rows2:
-                    row2["name_j22"]
-                    # print("%s" % (row2["name_j22(1)"]))
-                # completer = QCompleter(row2["name_j22"])
+                # cur2 = conn.cursor()
+                # cur2.execute("SELECT name_j22 FROM print_jb22")
+                # rows2 = cur2.fetchall()
+                # for row2 in rows2:
+                #     row2["name_j22"]
+                #     # print("%s" % (row2["name_j22(1)"]))
+                # # completer = QCompleter(row2["name_j22"])
                 directory = "anh/"
                 if not os.path.exists(directory):
                     os.makedirs(directory)
@@ -838,6 +849,11 @@ class Application:
                 self.lineEdit_2.setPlaceholderText('Phương pháp điều trị')
                 self.lineEdit_2.setFont(font)
 
+                self.completer_2 = QCompleter()
+                self.lineEdit_2.setCompleter(self.completer_2)
+                self.model_2 = QStringListModel()
+                self.completer_2.setModel(self.model_2)
+
                 self.lineEdit_3 = QtWidgets.QLineEdit(self)
                 self.lineEdit_3.setGeometry(QtCore.QRect(70, 270, 530, 50))
                 self.lineEdit_3.setObjectName("lineEdit_3")
@@ -852,6 +868,7 @@ class Application:
                 # self.listWidget.itemClicked.connect(self.call)
                 self.main_window()
                 self.get_data()
+                self.get_data1()
 
             def main_window(self):
                 self.setWindowTitle(self.title)
@@ -867,7 +884,18 @@ class Application:
                 #print(new_list)  # Test print
                 self.model.setStringList(new_list)  # From here up I was able to get the
                 # code to work but there's no auto completion in the QLineEdit.
+            def get_data1(self):
+                conn = sqlite3.connect("db_member.db")
+                cur2 = conn.cursor()
+                cur2.execute("SELECT name_j22 FROM print_jb22")
 
+                    # print("%s" % (row2["name_j22(1)"]))
+                # completer = QCompleter(row2["name_j22"])
+                results = cur2.fetchall()
+                new_list = [i[0] for i in results]
+                #print(new_list)  # Test print
+                self.model_2.setStringList(new_list)  # From here up I was able to get the
+                # code to work but there's no auto completion in the QLineEdit.
             def on_change(self):
                 self.cou = self.cou + 1
 
@@ -1111,12 +1139,12 @@ class Application:
 
 
                 # adding items to the combo box
-                self.available_cameras = QCameraInfo.availableCameras()
-                self.camera_selector.addItem("  CAMERA USB3.0")
-                self.camera_selector.addItems([camera.description()
-                                               for camera in self.available_cameras])
-                self.camera_selector1.addItem("   Chụp Tự Động")
-                self.camera_selector1.addItem("  Chụp Thủ Công")
+                # self.available_cameras = QCameraInfo.availableCameras()
+                # self.camera_selector.addItem("  CAMERA USB3.0")
+                # self.camera_selector.add Items([camera.description()
+                #                                for camera in self.available_cameras])
+                # self.camera_selector1.addItem("   Chụp Tự Động")
+                # self.camera_selector1.addItem("  Chụp Thủ Công")
                # self.camera_selector.stateChanged.connect(self.select_camera)
 
                 self.NEXT_7.clicked.connect(self.w1)

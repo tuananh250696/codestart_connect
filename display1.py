@@ -90,9 +90,9 @@ class Application:
         # self.LABELKEY3.place(x=120, y=380)
         # self.name_keyK = Entry(self.leftkey, font=('arial 26 bold'), width=40)
         # self.name_keyK.place(x=150, y=430)
-        USERNAME="admin1"
+        USERNAME="BBB"
 
-        cursorkey.execute("SELECT * FROM `member` WHERE `username` = ? and `password` = ?",( USERNAME, USERNAME))
+        cursorkey.execute("SELECT * FROM `member` WHERE `address` = ? and `key` = ? and `dt_id` = ?",( USERNAME, USERNAME, USERNAME))
         if cursorkey.fetchone() is not None:
             self.master = master
             self.logic1 = 1

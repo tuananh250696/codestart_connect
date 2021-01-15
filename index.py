@@ -1,7 +1,7 @@
 from tkinter import *
 import sqlite3
 import tkinter.messagebox
-import sys
+# import sys
 # from PyQt5.QtWidgets import *
 
 #w = root.winfo_screenwidth()
@@ -18,10 +18,10 @@ root.geometry("%dx%d+%d+%d" % (width, height, x, y))
 root.resizable(0, 0)
 
 #=======================================VARIABLES=====================================
-USERNAME = StringVar()
-PASSWORD = StringVar()
-FIRSTNAME = StringVar()
-LASTNAME = StringVar()
+# USERNAME = StringVar()
+# PASSWORD = StringVar()
+# FIRSTNAME = StringVar()
+# LASTNAME = StringVar()
 
 
 class Application:
@@ -54,10 +54,11 @@ class Application:
         # button
         self.bt_st_catalog = Button(self.left, text="Cập Nhật Mã Active", width=20, height=4, font=('arial 14 bold'),
                                     bg='orange',command=self.database_1)
-        self.bt_st_catalog.place(x=200, y=420)
+        self.bt_st_catalog.place(x=100, y=420)
 
         self.bt_exit1 = Button(self.left, text="Đóng", width=20, height=4, font=('arial 14 bold'), bg='orange', command=self.quit)
-        self.bt_exit1.place(x=480, y=420)
+        self.bt_exit1.place(x=355, y=420)
+
 
     def database_1(self):
         name_dtn1 = self.adr_id.get()
@@ -69,6 +70,8 @@ class Application:
         if name_dtn222 == '' or name_dtn1 == "" or name_dtn3 == "":
             tkinter.messagebox.showinfo("Error", "Điền đầy đủ thông tin.")
         else:
+            # n=len(name_dtn222)+25061996
+            # print(n)
             cursor.execute("DELETE FROM member WHERE id=1")
             cursor.execute('CREATE TABLE IF NOT EXISTS member (dt_id TEXT,address TEXT,key TEXT)')
             cursor.execute('INSERT INTO member (dt_id,address,key) VALUES(?,?,?)',

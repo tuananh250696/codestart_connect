@@ -17,6 +17,7 @@ root.resizable(0, 0)
 # USERNAME = StringVar()
 # PASSWORD = StringVar()
 
+
 class Application:
     def __init__(self, master):
         self.master = master
@@ -52,6 +53,8 @@ class Application:
 
         self.bt_exit1 = Button(self.left, text="Đóng", width=20, height=4, font=('arial 14 bold'), bg='orange')
         self.bt_exit1.place(x=480, y=420)
+        # self.getserial()
+        print(self.getserial())
 
     def Take_input(self):
         # self.adr_actice.delete(0, END)
@@ -69,6 +72,24 @@ class Application:
         #     Output.insert(END, 'Correct')
         # else:
         #     Output.insert(END, "Wrong answer")
+
+    def getserial(self):
+        # Extract serial from cpuinfo file
+        cpuserial = "0000000000000000"
+        try:
+            f = open('/proc/cpuinfo', 'r')
+            for line in f:
+                if line[0:6] == 'Serial':
+                    cpuserial = line[10:26]
+                    # print(cpuserial)
+            # print(cpuserial)
+            f.close()
+        except:
+            cpuserial = "ERROR000000000"
+
+        return cpuserial
+
+
 
 
 root.geometry("1024x600+0+0")

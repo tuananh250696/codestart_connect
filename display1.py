@@ -94,11 +94,11 @@ class Application:
         num1 = re.sub(r'\D', "", h1)
         name_dtn1 = self.getserial()
         nux=int(num1)
-        n =  25061996 * len(name_dtn1)+13235664 * nux
+        n =  len(name_dtn1) * nux
         num = re.sub(r'\d', "", h1)
         h22= str(n)+str(num)
         USERNAME1=h1
-        USERNAME2=h22
+        USERNAME2=str(h22)
 
         cursorkey.execute("SELECT * FROM `member` WHERE `dt_id` = ? and `address` = ? and `key` = ?",( USERNAME1, USERNAME2, USERNAME2))
         if cursorkey.fetchone() is not None:
@@ -169,9 +169,9 @@ class Application:
  
 
     def database_1(self):
-        h1n = 'A88dH5e8867'+self.getserial()
-        name_dtn1 = str(h1n)
-        name_dtn222 = self.adr_actice.get()
+        h1 = 'A88dH5e8867'+self.getserial()
+        name_dtn1 = h1
+        name_dtn222 =self.adr_actice.get()
         name_dtn3 =  self.adr_actice.get()
 
         conn = sqlite3.connect("d.db")

@@ -30,7 +30,7 @@ class Application:
                                  bg='lightblue')
         self.keyactive.place(x=50, y=40)
 
-        self.adr_id = Entry(self.left, font=('arial 20 bold'), width=40)
+        self.adr_id = Text(root, height=1,width=40,bg="light yellow", font=('arial 20 bold'), fg='red')
         self.adr_id.place(x=60, y=100)
 
         self.keymail = Label(self.left, text="Địa chỉ mail:", font=('arial 12 bold'), fg='black',
@@ -56,18 +56,21 @@ class Application:
         # self.getserial()
         #print(self.getserial())
         #self.adr_actice.insert(END,self.getserial())
+        hh1 = str('A88dH5e8867'+self.getserial())
+        self.adr_id.insert(END,hh1)
     def quit(self):
         root.withdraw()
         root.destroy()
 
     def Take_input(self):
+        
         # self.adr_actice.delete(0, END)
         h1 = 'A88dH5e8867'+self.getserial()
         num1 = re.sub(r'\D', "", h1)
-        name_dtn1 = self.adr_id.get()
+        name_dtn1 = self.getserial()
         nux=int(num1)
-        name_dtn222 = self.adr_mail.get()
-        n =  25061996 * len(name_dtn1)+13235664 * nux
+        n =  len(self.getserial())* nux
+        #n =  25061996 * len(name_dtn1)+13235664 * nux
         num = re.sub(r'\d', "", h1)
         h22= str(n)+str(num)
         #print(h22)

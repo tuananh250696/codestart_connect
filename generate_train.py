@@ -1,5 +1,5 @@
 from tkinter import *
-
+import re
 #w = root.winfo_screenwidth()
 #h = root.winfo_screenheight()f
 root = Tk()
@@ -51,20 +51,27 @@ class Application:
                                     bg='orange',command=self.Take_input)
         self.bt_st_catalog.place(x=200, y=420)
 
-        self.bt_exit1 = Button(self.left, text="Đóng", width=20, height=4, font=('arial 14 bold'), bg='orange')
+        self.bt_exit1 = Button(self.left, text="Đóng", width=20, height=4, font=('arial 14 bold'), bg='orange',command=self.quit)
         self.bt_exit1.place(x=480, y=420)
         # self.getserial()
-        print(self.getserial())
+        #print(self.getserial())
+        #self.adr_actice.insert(END,self.getserial())
+    def quit(self):
+        root.withdraw()
+        root.destroy()
 
     def Take_input(self):
         # self.adr_actice.delete(0, END)
+        h1 = 'A88dH5e8867'+self.getserial()
+        num1 = re.sub(r'\D', "", h1)
         name_dtn1 = self.adr_id.get()
-        nnnn=0x203325467854764986
+        nux=int(num1)
         name_dtn222 = self.adr_mail.get()
-        n = len(name_dtn222) * 25061996 * len(name_dtn1)+len(name_dtn222) * 13022002 * len(name_dtn1)*nnnn
-        h1 = hex(n)
-        newstr = h1.replace("0x", "")
-        self.adr_actice.insert(END,newstr)
+        n =  25061996 * len(name_dtn1)+13235664 * nux
+        num = re.sub(r'\d', "", h1)
+        h22= str(n)+str(num)
+        #print(h22)
+        self.adr_actice.insert(END,h22)
 
         # INPUT = inputtxt.get("1.0", "end-1c")
         # print(INPUT)
@@ -72,7 +79,6 @@ class Application:
         #     Output.insert(END, 'Correct')
         # else:
         #     Output.insert(END, "Wrong answer")
-
     def getserial(self):
         # Extract serial from cpuinfo file
         cpuserial = "0000000000000000"
@@ -89,9 +95,19 @@ class Application:
 
         return cpuserial
 
+           #  self.leftkey = Frame(root, width=1000, height=550, bg='lightblue')
+           #  self.leftkey.pack(side=LEFT)
+           #  self.LABELKEY = Label(self.leftkey, text="XIN VUI LÒNG ĐIỀN MÃ ACTICE TRƯỚC KHI SỬ DỤNG",
+        #                       font=('arial 24 bold'), fg='red', bg='lightblue')
+           #  self.LABELKEY.place(x=50, y=250)
+           #  self.LABELKEY22 = Label(self.leftkey, text="LIỆN HỆ TRỢ GIÚP : BOSSCOM COMPANY",
+           #                        font=('arial 16 bold'), fg='red', bg='lightblue')
+           #  self.LABELKEY22.place(x=120, y=300)
 
 
-
+        # self.name_key.focus()
+      #  self.LoginForm()
 root.geometry("1024x600+0+0")
 b = Application(root)
 root.mainloop()
+

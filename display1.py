@@ -13,7 +13,6 @@ import os
 from PyQt5 import QtCore, QtGui, QtWidgets  # uic
 from PyQt5.QtWidgets import (QLabel)  # +++
 from PyQt5.QtCore import QTimer
-# from PyQt5.QtMultimedia import *
 import shutil
 from test2_ui import Ui_Form
 import numpy as np
@@ -23,6 +22,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 import subprocess
+import re
 
 # Load Yolo
 net = cv2.dnn.readNet("yolov3-tiny_last.weights", "yolov3-tiny.cfg")
@@ -90,9 +90,17 @@ class Application:
         # self.LABELKEY3.place(x=120, y=380)
         # self.name_keyK = Entry(self.leftkey, font=('arial 26 bold'), width=40)
         # self.name_keyK.place(x=150, y=430)
-        USERNAME="BBB"
+        h1 = 'A88dH5e8867'+self.getserial()
+        num1 = re.sub(r'\D', "", h1)
+        name_dtn1 = self.getserial()
+        nux=int(num1)
+        n =  25061996 * len(name_dtn1)+13235664 * nux
+        num = re.sub(r'\d', "", h1)
+        h22= str(n)+str(num)
+        USERNAME1=h1
+        USERNAME2=h22
 
-        cursorkey.execute("SELECT * FROM `member` WHERE `address` = ? and `key` = ? and `dt_id` = ?",( USERNAME, USERNAME, USERNAME))
+        cursorkey.execute("SELECT * FROM `member` WHERE `dt_id` = ? and `address` = ? and `key` = ?",( USERNAME1, USERNAME2, USERNAME2))
         if cursorkey.fetchone() is not None:
             self.master = master
             self.logic1 = 1
@@ -129,15 +137,86 @@ class Application:
                                    command=self.quit)
             self.bt_exit1.place(x=5, y=454)
         else:
+            h1 = 'A88dH5e8867'+self.getserial()
+            self.left = Frame(root, width=1000, height=580, bg='lightblue')
+            self.left.pack(side=LEFT)
+        # components
+            self.keyactive = Label(self.left, text="MÃ ID THIẾT BỊ:", font=('arial 12 bold'), fg='black',bg='lightblue')
+            self.keyactive.place(x=50, y=40)
+            
 
-            self.leftkey = Frame(root, width=1000, height=550, bg='lightblue')
-            self.leftkey.pack(side=LEFT)
-            self.LABELKEY = Label(self.leftkey, text="XIN VUI LÒNG ĐIỀN MÃ ACTICE TRƯỚC KHI SỬ DỤNG",
-                                  font=('arial 24 bold'), fg='red', bg='lightblue')
-            self.LABELKEY.place(x=50, y=250)
-            self.LABELKEY22 = Label(self.leftkey, text="LIỆN HỆ TRỢ GIÚP : BOSSCOM COMPANY",
-                                  font=('arial 16 bold'), fg='red', bg='lightblue')
-            self.LABELKEY22.place(x=120, y=300)
+            self.adr_id = Text(root, height=1,width=40,bg="light yellow", font=('arial 20 bold'), fg='red')
+            self.adr_id.place(x=60, y=100)
+            self.adr_id.insert(END,h1)
+
+            self.keymail = Label(self.left, text="Địa chỉ mail:", font=('arial 12 bold'), fg='black',bg='lightblue')
+            self.keymail.place(x=50, y=150)
+            self.adr_mail = Entry(self.left, font=('arial 20 bold'), width=40)
+            self.adr_mail.place(x=60, y=210)
+
+            self.keyacticett = Label(self.left, text="Key Actice:", font=('arial 12 bold'), fg='black',bg='lightblue')
+            self.keyacticett.place(x=50, y=260)
+            self.adr_actice = Entry(self.left, font=('arial 20 bold'), width=40)
+            self.adr_actice.place(x=60, y=310)
+
+        # button
+            self.bt_st_catalog = Button(self.left, text="Cập Nhật Mã Active", width=20, height=4, font=('arial 14 bold'),bg='orange',command=self.database_1)
+            self.bt_st_catalog.place(x=100, y=420)
+
+            self.bt_exit1 = Button(self.left, text="Đóng", width=20, height=4, font=('arial 14 bold'), bg='orange', command=self.quit)
+            self.bt_exit1.place(x=355, y=420)
+        
+ 
+
+    def database_1(self):
+        h1n = 'A88dH5e8867'+self.getserial()
+        name_dtn1 = str(h1n)
+        name_dtn222 = self.adr_actice.get()
+        name_dtn3 =  self.adr_actice.get()
+
+        conn = sqlite3.connect("d.db")
+        cursor = conn.cursor()
+        if name_dtn222 == '' or name_dtn1 == "" or name_dtn3 == "":
+            tkinter.messagebox.showinfo("Error", "Điền đầy đủ thông tin.")
+        else:
+            # n=len(name_dtn222)+25061996
+            # print(n)
+            cursor.execute("DELETE FROM member WHERE id=1")
+            cursor.execute('CREATE TABLE IF NOT EXISTS member (dt_id TEXT,address TEXT,key TEXT)')
+            cursor.execute('INSERT INTO member (dt_id,address,key) VALUES(?,?,?)',
+                           ( name_dtn1,name_dtn222,name_dtn3))
+            tkinter.messagebox.showinfo("Success", "Đã ACtice")
+            conn.commit()
+            cursor.close()
+
+    # def quit(self):
+       #  root.withdraw()
+        # root.destroy()
+    
+    def getserial(self):
+        # Extract serial from cpuinfo file
+        cpuserial = "0000000000000000"
+        try:
+            f = open('/proc/cpuinfo', 'r')
+            for line in f:
+                if line[0:6] == 'Serial':
+                    cpuserial = line[10:26]
+                    # print(cpuserial)
+            # print(cpuserial)
+            f.close()
+        except:
+            cpuserial = "ERROR000000000"
+
+        return cpuserial
+
+           #  self.leftkey = Frame(root, width=1000, height=550, bg='lightblue')
+           #  self.leftkey.pack(side=LEFT)
+           #  self.LABELKEY = Label(self.leftkey, text="XIN VUI LÒNG ĐIỀN MÃ ACTICE TRƯỚC KHI SỬ DỤNG",
+        #                       font=('arial 24 bold'), fg='red', bg='lightblue')
+           #  self.LABELKEY.place(x=50, y=250)
+           #  self.LABELKEY22 = Label(self.leftkey, text="LIỆN HỆ TRỢ GIÚP : BOSSCOM COMPANY",
+           #                        font=('arial 16 bold'), fg='red', bg='lightblue')
+           #  self.LABELKEY22.place(x=120, y=300)
 
 
         # self.name_key.focus()

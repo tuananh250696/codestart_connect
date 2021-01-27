@@ -1227,13 +1227,20 @@ class Application:
                 pdf.cell(0, 15, ' ', ln=1)
                 pdf.set_x(126)
                 pdf.cell(0, 0, t2, ln=1)
-                if file_name == True or file_name1 == True or file_name2 == True or file_name3 == True or file_name4 == True or file_name5 == True :
+                #if file_name == '' or file_name1 == True or file_name2 == True or file_name3 == True or file_name4 == True or file_name5 == True :
+                if  os.path.exists(file_name)  :
                     pdf.image(file_name, 12, 90, 60)
                     pdf.image(file_name1, 12, 150, 60)
                     pdf.image(file_name2, 74, 90, 60)
                     pdf.image(file_name3, 74, 150, 60)
                     pdf.image(file_name4, 136, 90, 60)
                     pdf.image(file_name5, 136, 150, 60)
+                #pdf.image(file_name, 12, 90, 60)
+                #pdf.image(file_name1, 12, 150, 60)
+                #pdf.image(file_name2, 74, 90, 60)
+                #pdf.image(file_name3, 74, 150, 60)
+                #pdf.image(file_name4, 136, 90, 60)
+                #pdf.image(file_name5, 136, 150, 60)
                 
                 directory1 = "doccument/"
                 if not os.path.exists(directory1):
@@ -1304,7 +1311,7 @@ class Application:
                 if ret == True:
                     #image =cv2.resize(image, (320, 256))
                     image = cv2.resize(image, (640, 360))
-                    image = cv2.flip(image, 1)
+                   # image = cv2.flip(image, 1)
                     frame1 = cv2.resize(image, (416, 416))
                     frame2 = cv2.resize(image, (200, 150))
                     # frame1 = imutils.resize(image, width=640, height=480)
@@ -1401,12 +1408,13 @@ class Application:
             @QtCore.pyqtSlot()
 
             def capture_image(self):
-                if self.cap is None:
-                    flag, frame = self.cap.read()
+                
+                flag, frame = self.cap.read()
+                if flag == True:
+                    
                     frame1 = imutils.resize(frame, width=240, height=170)
-
                     self.value1 = self.value1 + 1
-                    cv2.putText(frame1, str(round(self.value1, 2)), (10, 50), font, 3, (250, 200, 0), 3)
+                    #cv2.putText(frame1, str(round(self.value1, 2)), (10, 50), font, 3, (250, 200, 0), 3)
                     conn = sqlite3.connect("db_member.db")
                     conn.row_factory = sqlite3.Row
                     cur = conn.cursor()
@@ -1441,10 +1449,16 @@ class Application:
                     self.it17.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + "18")))
                     conn.commit()
                     conn.close()
-                else:
+                if flag == False:
+                    
                     font = QFont('Times', 42)
                     self.imgLabel.setFont(font)
                     self.imgLabel.setText("No Single : Kiểm Tra Tín Hiệu !")
+                    
+                #else:
+                    #font = QFont('Times', 42)
+                    #self.imgLabel.setFont(font)
+                    #self.imgLabel.setText("No Single : Kiểm Tra Tín Hiệu !")
                     
             
 

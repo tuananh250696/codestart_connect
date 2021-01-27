@@ -1205,13 +1205,7 @@ class Application:
                 file_name4 = ('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.anh5)))
                 file_name5 = ('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.anh6)))
                 #
-                pdf.image(file_name, 12, 90, 60)
-                pdf.image(file_name1, 12, 150, 60)
-                pdf.image(file_name2, 74, 90, 60)
-                pdf.image(file_name3, 74, 150, 60)
-                pdf.image(file_name4, 136, 90, 60)
-                pdf.image(file_name5, 136, 150, 60)
-
+    
                 pdf.set_font('DejaVu', '', 16)
                 pdf.cell(0, 130, ' ', ln=1)
                 pdf.cell(60)
@@ -1233,6 +1227,14 @@ class Application:
                 pdf.cell(0, 15, ' ', ln=1)
                 pdf.set_x(126)
                 pdf.cell(0, 0, t2, ln=1)
+                if file_name == True or file_name1 == True or file_name2 == True or file_name3 == True or file_name4 == True or file_name5 == True :
+                    pdf.image(file_name, 12, 90, 60)
+                    pdf.image(file_name1, 12, 150, 60)
+                    pdf.image(file_name2, 74, 90, 60)
+                    pdf.image(file_name3, 74, 150, 60)
+                    pdf.image(file_name4, 136, 90, 60)
+                    pdf.image(file_name5, 136, 150, 60)
+                
                 directory1 = "doccument/"
                 if not os.path.exists(directory1):
                     os.makedirs(directory1)

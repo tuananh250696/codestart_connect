@@ -1228,7 +1228,7 @@ class Application:
                 pdf.set_x(126)
                 pdf.cell(0, 0, t2, ln=1)
                 #if file_name == '' or file_name1 == True or file_name2 == True or file_name3 == True or file_name4 == True or file_name5 == True :
-                if  os.path.exists(file_name)  :
+                if  os.path.exists(file_name) and os.path.exists(file_name1) and os.path.exists(file_name2) and os.path.exists(file_name3) and os.path.exists(file_name4) and os.path.exists(file_name5) :
                     pdf.image(file_name, 12, 90, 60)
                     pdf.image(file_name1, 12, 150, 60)
                     pdf.image(file_name2, 74, 90, 60)

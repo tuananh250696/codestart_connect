@@ -775,7 +775,7 @@ class Application:
         for row in rows:
             row["id"]
         # webbrowser.open_new(r'doccument/%s.pdf' % ("a" + str(row["id"])))
-        webbrowser.open_new(r'doccument\%s.pdf' % ("a" + str(row["id"])))
+        webbrowser.open_new(r'doccument/%s.pdf' % ("a" + str(row["id"])))
 
 
     def endoscopy(self):
@@ -1286,7 +1286,12 @@ class Application:
             def start_webcam(self):
                 if self.cap is None:
                     self.cap = cv2.VideoCapture(0)
+                    #self.imgLabel.setText("No Single")
                 self.timer.start()
+               
+                #else:
+                #self.imgLabel.setText("No Single")
+                
 
             @QtCore.pyqtSlot()
             def update_frame(self):
@@ -1394,45 +1399,52 @@ class Application:
             @QtCore.pyqtSlot()
 
             def capture_image(self):
-                flag, frame = self.cap.read()
-                frame1 = imutils.resize(frame, width=240, height=170)
+                if self.cap is None:
+                    flag, frame = self.cap.read()
+                    frame1 = imutils.resize(frame, width=240, height=170)
 
-                self.value1 = self.value1 + 1
-                cv2.putText(frame1, str(round(self.value1, 2)), (10, 50), font, 3, (250, 200, 0), 3)
-                conn = sqlite3.connect("db_member.db")
-                conn.row_factory = sqlite3.Row
-                cur = conn.cursor()
-                cur.execute("SELECT max(id) FROM member")
-                rows = cur.fetchall()
-                directory = "anh/"
-                if not os.path.exists(directory):
-                    os.makedirs(directory)
-                for row in rows:
-                    row["max(id)"]
-                cv2.imwrite('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.value1)), frame1)
-                self.TEXT.setText('your Image have been Saved')
-                self.label = QLabel(self)
+                    self.value1 = self.value1 + 1
+                    cv2.putText(frame1, str(round(self.value1, 2)), (10, 50), font, 3, (250, 200, 0), 3)
+                    conn = sqlite3.connect("db_member.db")
+                    conn.row_factory = sqlite3.Row
+                    cur = conn.cursor()
+                    cur.execute("SELECT max(id) FROM member")
+                    rows = cur.fetchall()
+                    directory = "anh/"
+                    if not os.path.exists(directory):
+                        os.makedirs(directory)
+                    for row in rows:
+                        row["max(id)"]
+                    cv2.imwrite('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.value1)), frame1)
+                    self.TEXT.setText('your Image have been Saved')
+                    self.label = QLabel(self)
 
-                self.it.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + "1")))
-                self.it1.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + "2")))
-                self.it2.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + "3")))
-                self.it3.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + "4")))
-                self.it4.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + "5")))
-                self.it5.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + "6")))
-                self.it6.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + "7")))
-                self.it7.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + "8")))
-                self.it8.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + "9")))
-                self.it9.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + "10")))
-                self.it10.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + "11")))
-                self.it11.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + "12")))
-                self.it12.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + "13")))
-                self.it13.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + "14")))
-                self.it14.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + "15")))
-                self.it15.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + "16")))
-                self.it16.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + "17")))
-                self.it17.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + "18")))
-                conn.commit()
-                conn.close()
+                    self.it.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + "1")))
+                    self.it1.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + "2")))
+                    self.it2.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + "3")))
+                    self.it3.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + "4")))
+                    self.it4.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + "5")))
+                    self.it5.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + "6")))
+                    self.it6.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + "7")))
+                    self.it7.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + "8")))
+                    self.it8.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + "9")))
+                    self.it9.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + "10")))
+                    self.it10.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + "11")))
+                    self.it11.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + "12")))
+                    self.it12.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + "13")))
+                    self.it13.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + "14")))
+                    self.it14.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + "15")))
+                    self.it15.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + "16")))
+                    self.it16.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + "17")))
+                    self.it17.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + "18")))
+                    conn.commit()
+                    conn.close()
+                else:
+                    font = QFont('Times', 42)
+                    self.imgLabel.setFont(font)
+                    self.imgLabel.setText("No Single : Kiểm Tra Tín Hiệu !")
+                    
+            
 
             def window2(self):  # <===
                 self.w = Window2()
@@ -1558,3 +1570,4 @@ app = QApplication(sys.argv)
 root.geometry("1024x600+0+0")
 b = Application(root)
 root.mainloop()
+

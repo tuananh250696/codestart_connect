@@ -1297,6 +1297,9 @@ class Application:
                     self.cap = cv2.VideoCapture(0)
                     # self.imgLabel.setText("No Single")
                 self.timer.start()
+                font = QFont('Times', 42)
+                self.imgLabel.setFont(font)
+                self.imgLabel.setText("No Single : Kiểm Tra Tín Hiệu !")
 
                 # else:
                 # self.imgLabel.setText("No Single")

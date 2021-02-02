@@ -22,6 +22,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 import subprocess
+import platform
 import re
 
 # Load Yolo
@@ -873,8 +874,15 @@ class Application:
         cursor.close()
 
     def quit(self):
-        root.withdraw()
-        root.destroy()
+        if platform.system() == 'Linux':
+            
+            command = 'sudo shutdown -P +' + '0'
+        else:
+            command = 'echo "os not compatible"'
+        os.system(command) 
+        
+#         root.withdraw()
+#         root.destroy()
   
    
         

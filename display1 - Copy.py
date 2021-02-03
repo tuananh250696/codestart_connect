@@ -22,12 +22,13 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 import subprocess
+import platform
 import re
 
 # Load Yolo
-net = cv2.dnn.readNet("yolov3-tiny_last.weights", "yolov3-tiny.cfg")
+net = cv2.dnn.readNet("yolov3-tiny_final.weights", "yolov3Copy.cfg")
 classes = []
-with open("classes3.txt", "r") as f:
+with open("classes4.txt", "r") as f:
     classes = [line.strip() for line in f.readlines()]
 layer_names = net.getLayerNames()
 output_layers = [layer_names[i[0] - 1] for i in net.getUnconnectedOutLayers()]
@@ -50,6 +51,16 @@ root = Tk()
 # root1 = Tk()
 # root2 = Tk()
 root.title("COMPANY BOSSCCOM")
+addWindow = Toplevel(root)
+addWindow.title("Set form print")
+addWindow.overrideredirect(True)
+addWindow.geometry("980x550+0+0")
+
+newWindowaddf = Toplevel(root)
+newWindowaddf.title("add infomation")
+newWindowaddf.geometry("980x550+0+0")
+newWindowaddf.overrideredirect(True)
+
 labels_list = []
 var = IntVar()
 var1 = IntVar()
@@ -64,6 +75,8 @@ class Application:
     def __init__(self, master):
         connkey = sqlite3.connect("d.db")
         cursorkey = connkey.cursor()
+        
+       
         # cursorkey.execute(
         #     "CREATE TABLE IF NOT EXISTS `member` (mem_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, username TEXT, password TEXT, firstname TEXT, lastname TEXT)")
         # self.leftkey = Frame(master,width=1000, height=550, bg='lightblue')
@@ -102,9 +115,12 @@ class Application:
 
         cursorkey.execute("SELECT * FROM `member` WHERE `dt_id` = ? and `address` = ? and `key` = ?",( USERNAME1, USERNAME2, USERNAME2))
         if cursorkey.fetchone() is not None:
+#             root.overrideredirect(True)
+            root.overrideredirect(True)
             self.master = master
             self.logic1 = 1
             self.logic2 = 1
+            self.tab=1
             # frame
             self.left = Frame(master, width=215, height=600, bg='white')
             self.left.pack(side=LEFT)
@@ -125,8 +141,7 @@ class Application:
             self.bt_st_form.place(x=5, y=136)
 
             self.bt_patient = Button(self.left, text="Biểu mẫu in", width=16, height=4, font=('arial 14 bold'),
-                                     bg='orange',
-                                     command=self.add_to_bn)
+                                     bg='orange',command=self.showad)
             self.bt_patient.place(x=5, y=242)
 
             self.bt_endoscop = Button(self.left, text="Danh mục khám", width=16, height=4, font=('arial 14 bold'),
@@ -136,6 +151,180 @@ class Application:
             self.bt_exit1 = Button(self.left, text="Thoát", width=16, height=4, font=('arial 14 bold'), bg='orange',
                                    command=self.quit)
             self.bt_exit1.place(x=5, y=454)
+ ######################           
+            self.rightw2 = Frame(addWindow, width=550, height=600, bg='lightblue')
+            self.rightw2.pack(side=RIGHT)
+            self.rightw3 = Frame(addWindow, width=600, height=600, bg='lightblue')
+            self.rightw3.pack(side=LEFT)
+            self.adr2 = Label(self.rightw3, text="Phòng khám:", font=('arial 16 bold'), fg='black', bg='lightblue')
+            self.adr2.place(x=10, y=10)
+            self.adr2_p = Entry(self.rightw3, font=('arial 20 bold'), width=26)
+            self.adr2_p.place(x=150, y=10)
+
+            self.doctor = Label(self.rightw3, text=" Bác sĩ :", font=('arial 16 bold'), fg='black', bg='lightblue')
+            self.doctor.place(x=10, y=85)
+
+            self.doctor_p = Entry(self.rightw3, font=('arial 20 bold'), width=26)
+            self.doctor_p.place(x=150, y=75)
+
+            self.n2 = Label(self.rightw3, text="Địa chỉ:", font=('arial 16 bold'), fg='black', bg='lightblue')
+            self.n2.place(x=10, y=155)
+
+            self.n2_p = Entry(self.rightw3, font=('arial 20 bold'), width=26)
+            self.n2_p.place(x=150, y=150)
+
+            self.add_dt = Button(self.rightw3, text="Cập nhật", width=15, height=3, font=('arial 18 bold'), bg='orange',command=self.database_print)
+            self.add_dt.place(x=40, y=220)
+
+            self.add_dltd = Button(self.rightw3, text="Xóa", width=15, height=3, font=('arial 18 bold'), bg='orange',
+                                   command=self.Deletedata_print)  # command=self.quit_print2)
+            self.add_dltd.place(x=280, y=220)
+            self.add_dltd1 = Button(self.rightw3, text="Đóng", width=15, height=3, font=('arial 18 bold'), bg='orange'
+                                    ,command=self.quitff)
+            self.add_dltd1.place(x=265, y=410)
+
+            self.addrn = Label(self.rightw3, text="Icon Addr:", font=('arial 18 bold'), fg='black', bg='lightblue')
+            self.addrn.place(x=10, y=360)
+
+            self.addrn_p = Entry(self.rightw3, font=('arial 22 bold'), width=25)
+            self.addrn_p.place(x=130, y=360)
+
+            self.add_dl = Button(self.rightw3, text="Thêm Icon", width=15, height=3, font=('arial 18 bold'),
+                                 bg='orange', command=self.openfile)
+            self.add_dl.place(x=30, y=410)
+
+            self.scrollbarx = Scrollbar(self.rightw2, orient=HORIZONTAL)
+            self.scrollbary = Scrollbar(self.rightw2, orient=VERTICAL)
+            self.tree1 = ttk.Treeview(self.rightw2, columns=("Id", "Phòng khám", "Bác sĩ", "Địa chỉ"),
+                                      selectmode="extended",
+                                      height=400, yscrollcommand=self.scrollbary.set,
+                                      xscrollcommand=self.scrollbarx.set)
+            self.scrollbary.config(command=self.tree1.yview)
+            self.scrollbary.pack(side=RIGHT, fill=Y)
+            self.scrollbarx.config(command=self.tree1.xview)
+            self.scrollbarx.pack(side=BOTTOM, fill=X)
+            self.tree1.column('#0', stretch=NO, minwidth=0, width=0)
+            self.tree1.column('#1', stretch=NO, minwidth=0, width=20)
+            self.tree1.column('#2', stretch=NO, minwidth=0, width=180)
+            self.tree1.column('#3', stretch=NO, minwidth=0, width=120)
+            self.tree1.column('#4', stretch=NO, minwidth=0, width=80)
+
+            self.tree1.pack()
+            self.tree1.heading('Id', text="Id", anchor=W)
+            self.tree1.heading('Phòng khám', text="Phòng khám", anchor=W)
+            self.tree1.heading('Bác sĩ', text="Bác sĩ", anchor=W)
+            self.tree1.heading('Địa chỉ', text="Địa chỉ", anchor=W)
+            self.tree1.pack()
+
+            conn = sqlite3.connect("db_member.db")
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM `print_dt`")
+            fetch = cursor.fetchall()
+            for data in fetch:
+                self.tree1.insert('', 'end', values=(data))
+            cursor.close()
+            conn.close()
+            
+        
+
+            self.rightw2 = Frame(newWindowaddf, width=205, height=500, bg='lightblue')
+            self.rightw2.pack(side=RIGHT)
+            self.rightw4 = Frame(newWindowaddf, width=205, height=500, bg='lightyellow')
+            self.rightw4.pack(side=RIGHT)
+            self.rightw3 = Frame(newWindowaddf, width=540, height=500, bg='lightblue')
+            self.rightw3.pack(side=LEFT)
+
+            self.n3 = Label(self.rightw3, text="Danh Mục Chẩn Đoán:", font=('arial 14 bold'), fg='black', bg='lightblue')
+            self.n3.place(x=10, y=10)
+
+            self.ad_if2 = Entry(self.rightw3, font=('arial 28 bold'), width=16)
+            self.ad_if2.place(x=188, y=39)
+
+        # self.n4 = Label(self.rightw3, text="Danh Mục:", font=('arial 14 bold'), fg='black', bg='lightblue')
+        # self.n4.place(x=10, y=90)
+
+            self.droplist1 = OptionMenu(self.rightw3, c1, 'TAI', 'MŨI', 'HỌNG')
+            self.droplist1.pack()
+
+            self.menu = self.droplist1.nametowidget(self.droplist1.menuname)
+            self.menu.configure(font=('arial 28 bold'))
+            c1.set('HỌNG')
+
+            self.droplist1.config(width=9, height=1, font=('arial 20 bold'))
+            self.droplist1.place(x=5, y=40)
+
+            self.add_ifmt = Button(self.rightw3, text="Cập nhật", width=12, height=2, font=('arial 18 bold'), bg='orange',
+                                   command=self.database_print111)
+            self.add_ifmt.place(x=5, y=90)
+
+            self.n4 = Label(self.rightw3, text="Phương Pháp Điều Trị:", font=('arial 14 bold'), fg='black', bg='lightblue')
+            self.n4.place(x=10, y=185)
+
+            self.ad_j2 = Entry(self.rightw3, font=('arial 28 bold'), width=24)
+            self.ad_j2.place(x=10, y=215)
+
+            self.add_ifmj = Button(self.rightw3, text="Cập nhật", width=12, height=2, font=('arial 18 bold'), bg='orange',
+                                   command=self.database_printnn1)
+            self.add_ifmj.place(x=5, y=270)
+
+            self.add_dltifmtjj = Button(self.rightw3, text="Xóa", width=16, height=2, font=('arial 18 bold'),
+                                      bg='orange', command=self.Deletedata_NewWindow)
+            self.add_dltifmtjj.place(x=30, y=390)
+            
+            self.add_dltifmtjj11 = Button(self.rightw3, text="Đóng", width=16, height=2, font=('arial 18 bold'),
+                                      bg='orange', command=self.quitNewWindow)
+            self.add_dltifmtjj11.place(x=265, y=390)
+
+        # self.add_dltd = Button(self.rightw3, text="Đóng", width=14, height=2, font=('arial 20 bold'),
+        #                        bg='orange', command=self.quit_print1)
+        # self.add_dltd.place(x=5, y=400)
+            scrollbary = Scrollbar(self.rightw2, orient=VERTICAL)
+            scrollbarx = Scrollbar(self.rightw2, orient=HORIZONTAL)
+            self.tree2 = ttk.Treeview(self.rightw2, columns=("Danh Mục", "Chẩn Đoán"),
+                                      selectmode="extended", height=250, yscrollcommand=scrollbary.set,
+                                      xscrollcommand=scrollbarx.set)
+            scrollbary.config(command=self.tree2.yview)
+            scrollbary.pack(side=RIGHT, fill=Y)
+            scrollbarx.config(command=self.tree2.xview)
+            scrollbarx.pack(side=BOTTOM, fill=X)
+            self.tree2.heading('Danh Mục', text="Danh Mục", anchor=W)
+            self.tree2.heading('Chẩn Đoán', text="Chẩn Đoán", anchor=W)
+            self.tree2.column('#0', stretch=NO, minwidth=0, width=0)
+            self.tree2.column('#1', stretch=NO, minwidth=0, width=200)
+            self.tree2.column('#2', stretch=NO, minwidth=0, width=0)
+            self.tree2.pack()
+
+            scrollbary = Scrollbar(self.rightw4, orient=VERTICAL)
+            scrollbarx = Scrollbar(self.rightw4, orient=HORIZONTAL)
+            self.tree4 = ttk.Treeview(self.rightw4, columns=("Danh Mục Chẩn Đoán", "Phương pháp điều trị"),
+                                      selectmode="extended", height=250, yscrollcommand=scrollbary.set,
+                                      xscrollcommand=scrollbarx.set)
+            scrollbary.config(command=self.tree4.yview)
+            scrollbary.pack(side=RIGHT, fill=Y)
+            scrollbarx.config(command=self.tree2.xview)
+            scrollbarx.pack(side=BOTTOM, fill=X)
+            self.tree4.heading('Danh Mục Chẩn Đoán', text="Danh Mục Chẩn Đoán", anchor=W)
+            self.tree4.heading('Phương pháp điều trị', text="Phương pháp điều trị", anchor=W)
+            self.tree4.column('#0', stretch=NO, minwidth=0, width=0)
+            self.tree4.column('#1', stretch=NO, minwidth=0, width=0)
+            self.tree4.column('#2', stretch=NO, minwidth=0, width=195)
+            self.tree4.pack()
+
+            conn = sqlite3.connect("db_member.db")
+            cursor = conn.cursor()
+            cursor1 = conn.cursor()
+            cursor.execute("SELECT * FROM `print_dt22`")
+            fetch = cursor.fetchall()
+            cursor1.execute("SELECT * FROM `print_jb22`")
+            fetch1 = cursor1.fetchall()
+            for data in fetch:
+                self.tree2.insert('', 'end', values=(data))
+            for data1 in fetch1:
+                self.tree4.insert('', 'end', values=(data1))
+            cursor.close()
+            conn.close()
+            addWindow.withdraw()
+            newWindowaddf.withdraw()
         else:
             h1 = 'A88dH5e8867'+self.getserial()
             self.left = Frame(root, width=1000, height=580, bg='lightblue')
@@ -163,8 +352,10 @@ class Application:
             self.bt_st_catalog = Button(self.left, text="Cập Nhật Mã Active", width=20, height=4, font=('arial 14 bold'),bg='orange',command=self.database_1)
             self.bt_st_catalog.place(x=100, y=420)
 
-            self.bt_exit1 = Button(self.left, text="Đóng", width=20, height=4, font=('arial 14 bold'), bg='orange', command=self.quit)
+            self.bt_exit1 = Button(self.left, text="Đóng", width=20, height=4, font=('arial 14 bold'), bg='orange', command=self.quitdd)
             self.bt_exit1.place(x=355, y=420)
+            addWindow.withdraw()
+            newWindowaddf.withdraw()
         
  
 
@@ -469,84 +660,124 @@ class Application:
             tkinter.messagebox.showinfo("Success", "Đã thêm thông tin")
             conn.commit()
             cursor.close()
+        
 
-    def add_to_bn(self, *args, **kwargs):
+#     def add_to_bn(self, *args, **kwargs):
+# #         root.withdraw()
+#         #self.tab=1
+#         #addWindow = Toplevel(root)
+#         #addWindow.title("Set form print")
+#         #addWindow.overrideredirect(True)
+#         #addWindow.geometry("980x550+0+0")
+#         addWindow = Toplevel(root)
+#         addWindow.title("Set form print")
+#         addWindow.overrideredirect(True)
+#         addWindow.geometry("980x550+0+0")
+# 
+#        
+#         self.rightw2 = Frame(addWindow, width=550, height=600, bg='lightblue')
+#         self.rightw2.pack(side=RIGHT)
+#         self.rightw3 = Frame(addWindow, width=600, height=600, bg='lightblue')
+#         self.rightw3.pack(side=LEFT)
+# 
+#         self.adr2 = Label(self.rightw3, text="Phòng khám:", font=('arial 16 bold'), fg='black', bg='lightblue')
+#         self.adr2.place(x=10, y=10)
+#         self.adr2_p = Entry(self.rightw3, font=('arial 20 bold'), width=26)
+#         self.adr2_p.place(x=150, y=10)
+# 
+#         self.doctor = Label(self.rightw3, text=" Bác sĩ :", font=('arial 16 bold'), fg='black', bg='lightblue')
+#         self.doctor.place(x=10, y=85)
+# 
+#         self.doctor_p = Entry(self.rightw3, font=('arial 20 bold'), width=26)
+#         self.doctor_p.place(x=150, y=75)
+# 
+#         self.n2 = Label(self.rightw3, text="Địa chỉ:", font=('arial 16 bold'), fg='black', bg='lightblue')
+#         self.n2.place(x=10, y=155)
+# 
+#         self.n2_p = Entry(self.rightw3, font=('arial 20 bold'), width=26)
+#         self.n2_p.place(x=150, y=150)
+# 
+#         self.add_dt = Button(self.rightw3, text="Cập nhật", width=15, height=3, font=('arial 18 bold'), bg='orange'
+#                              ,command=self.database_print)
+#         self.add_dt.place(x=40, y=220)
+# 
+#         self.add_dltd = Button(self.rightw3, text="Xóa", width=15, height=3, font=('arial 18 bold'), bg='orange',
+#                                command=self.Deletedata_print)  # command=self.quit_print2)
+#         self.add_dltd.place(x=280, y=220)
+#         self.add_dltd1 = Button(self.rightw3, text="Đóng", width=15, height=3, font=('arial 18 bold'), bg='orange'
+#                                 ,command=self.quitff)
+#         self.add_dltd1.place(x=265, y=410)
+# 
+#         self.addrn = Label(self.rightw3, text="Icon Addr:", font=('arial 18 bold'), fg='black', bg='lightblue')
+#         self.addrn.place(x=10, y=360)
+# 
+#         self.addrn_p = Entry(self.rightw3, font=('arial 22 bold'), width=25)
+#         self.addrn_p.place(x=130, y=360)
+# 
+#         self.add_dl = Button(self.rightw3, text="Thêm Icon", width=15, height=3, font=('arial 18 bold'),
+#                              bg='orange', command=self.openfile)
+#         self.add_dl.place(x=30, y=410)
+# 
+#         self.scrollbarx = Scrollbar(self.rightw2, orient=HORIZONTAL)
+#         self.scrollbary = Scrollbar(self.rightw2, orient=VERTICAL)
+#         self.tree1 = ttk.Treeview(self.rightw2, columns=("Id", "Phòng khám", "Bác sĩ", "Địa chỉ"),
+#                                   selectmode="extended",
+#                                   height=400, yscrollcommand=self.scrollbary.set,
+#                                   xscrollcommand=self.scrollbarx.set)
+#         self.scrollbary.config(command=self.tree1.yview)
+#         self.scrollbary.pack(side=RIGHT, fill=Y)
+#         self.scrollbarx.config(command=self.tree1.xview)
+#         self.scrollbarx.pack(side=BOTTOM, fill=X)
+#         self.tree1.column('#0', stretch=NO, minwidth=0, width=0)
+#         self.tree1.column('#1', stretch=NO, minwidth=0, width=20)
+#         self.tree1.column('#2', stretch=NO, minwidth=0, width=180)
+#         self.tree1.column('#3', stretch=NO, minwidth=0, width=120)
+#         self.tree1.column('#4', stretch=NO, minwidth=0, width=80)
+# 
+#         self.tree1.pack()
+#         self.tree1.heading('Id', text="Id", anchor=W)
+#         self.tree1.heading('Phòng khám', text="Phòng khám", anchor=W)
+#         self.tree1.heading('Bác sĩ', text="Bác sĩ", anchor=W)
+#         self.tree1.heading('Địa chỉ', text="Địa chỉ", anchor=W)
+#         self.tree1.pack()
+# 
+#         conn = sqlite3.connect("db_member.db")
+#         cursor = conn.cursor()
+#         cursor.execute("SELECT * FROM `print_dt`")
+#         fetch = cursor.fetchall()
+#         for data in fetch:
+#             self.tree1.insert('', 'end', values=(data))
+#         cursor.close()
+#         conn.close()
+    
+    def show(self):
+        
+        root.update()
+        root.deiconify()
+    def showad(self):
+        root.withdraw()
+        addWindow.update()
+        addWindow.deiconify()
+       # addWindow.withdraw()
+    def quitff(self):
+        addWindow.withdraw()
+        #addWindow.destroy()
+        self.show()
+    def quitdd(self):
+        root.withdraw()
+        root.destroy()
+        
 
-        addWindow = Toplevel(root)
-        addWindow.title("Set form print")
-        addWindow.geometry("980x550+0+0")
-        self.rightw2 = Frame(addWindow, width=550, height=600, bg='lightblue')
-        self.rightw2.pack(side=RIGHT)
-        self.rightw3 = Frame(addWindow, width=600, height=600, bg='lightblue')
-        self.rightw3.pack(side=LEFT)
-
-        self.adr2 = Label(self.rightw3, text="Phòng khám:", font=('arial 16 bold'), fg='black', bg='lightblue')
-        self.adr2.place(x=10, y=10)
-        self.adr2_p = Entry(self.rightw3, font=('arial 20 bold'), width=26)
-        self.adr2_p.place(x=150, y=10)
-
-        self.doctor = Label(self.rightw3, text=" Bác sĩ :", font=('arial 16 bold'), fg='black', bg='lightblue')
-        self.doctor.place(x=10, y=85)
-
-        self.doctor_p = Entry(self.rightw3, font=('arial 20 bold'), width=26)
-        self.doctor_p.place(x=150, y=75)
-
-        self.n2 = Label(self.rightw3, text="Địa chỉ:", font=('arial 16 bold'), fg='black', bg='lightblue')
-        self.n2.place(x=10, y=155)
-
-        self.n2_p = Entry(self.rightw3, font=('arial 20 bold'), width=26)
-        self.n2_p.place(x=150, y=150)
-
-        self.add_dt = Button(self.rightw3, text="Cập nhật", width=15, height=3, font=('arial 18 bold'), bg='orange',
-                             command=self.database_print)
-        self.add_dt.place(x=40, y=220)
-
-        self.add_dltd = Button(self.rightw3, text="Xóa", width=15, height=3, font=('arial 18 bold'), bg='orange',
-                               command=self.Deletedata_print)  # command=self.quit_print2)
-        self.add_dltd.place(x=280, y=220)
-
-        self.addrn = Label(self.rightw3, text="Icon Addr:", font=('arial 18 bold'), fg='black', bg='lightblue')
-        self.addrn.place(x=10, y=360)
-
-        self.addrn_p = Entry(self.rightw3, font=('arial 22 bold'), width=25)
-        self.addrn_p.place(x=130, y=360)
-
-        self.add_dl = Button(self.rightw3, text="Thêm Icon", width=15, height=3, font=('arial 18 bold'),
-                             bg='orange', command=self.openfile)
-        self.add_dl.place(x=165, y=410)
-
-        self.scrollbarx = Scrollbar(self.rightw2, orient=HORIZONTAL)
-        self.scrollbary = Scrollbar(self.rightw2, orient=VERTICAL)
-        self.tree1 = ttk.Treeview(self.rightw2, columns=("Id", "Phòng khám", "Bác sĩ", "Địa chỉ"),
-                                  selectmode="extended",
-                                  height=400, yscrollcommand=self.scrollbary.set,
-                                  xscrollcommand=self.scrollbarx.set)
-        self.scrollbary.config(command=self.tree1.yview)
-        self.scrollbary.pack(side=RIGHT, fill=Y)
-        self.scrollbarx.config(command=self.tree1.xview)
-        self.scrollbarx.pack(side=BOTTOM, fill=X)
-        self.tree1.column('#0', stretch=NO, minwidth=0, width=0)
-        self.tree1.column('#1', stretch=NO, minwidth=0, width=20)
-        self.tree1.column('#2', stretch=NO, minwidth=0, width=180)
-        self.tree1.column('#3', stretch=NO, minwidth=0, width=120)
-        self.tree1.column('#4', stretch=NO, minwidth=0, width=80)
-
-        self.tree1.pack()
-        self.tree1.heading('Id', text="Id", anchor=W)
-        self.tree1.heading('Phòng khám', text="Phòng khám", anchor=W)
-        self.tree1.heading('Bác sĩ', text="Bác sĩ", anchor=W)
-        self.tree1.heading('Địa chỉ', text="Địa chỉ", anchor=W)
-        self.tree1.pack()
-
-        conn = sqlite3.connect("db_member.db")
-        cursor = conn.cursor()
-        cursor.execute("SELECT * FROM `print_dt`")
-        fetch = cursor.fetchall()
-        for data in fetch:
-            self.tree1.insert('', 'end', values=(data))
-        cursor.close()
-        conn.close()
-
+    
+    def createNewWindow(self):
+        root.withdraw()
+        newWindowaddf.update()
+        newWindowaddf.deiconify()
+    def quitNewWindow(self):
+        newWindowaddf.withdraw()
+        #addWindow.destroy()
+        self.show()
+#         
 
     def Deletedata_print(self):
         conn = sqlite3.connect("db_member.db")
@@ -587,13 +818,15 @@ class Application:
             conn.commit()
             cursor.close()
             self.ad_if2.delete(0, END)
+#             self.ad_if2.delete(0, END)
 
     def database_printnn1(self):
         name_dtn222 = self.ad_j2.get()
+        name_dtn224 = self.ad_j2.get()
 
         conn = sqlite3.connect("db_member.db")
         cursor = conn.cursor()
-        if name_dtn222 == '':
+        if name_dtn222 == ''or name_dtn224 == '':
             tkinter.messagebox.showinfo("Error", "điền đầy đủ thông tin!.")
 
         else:
@@ -628,103 +861,9 @@ class Application:
             conn.commit()
             cursor.close()
 
-    def createNewWindow(self):
-        newWindowaddf = Toplevel(root)
-        newWindowaddf.title("add infomation")
-        newWindowaddf.geometry("980x550+0+0")
-
-        self.rightw2 = Frame(newWindowaddf, width=205, height=500, bg='lightblue')
-        self.rightw2.pack(side=RIGHT)
-        self.rightw4 = Frame(newWindowaddf, width=205, height=500, bg='lightyellow')
-        self.rightw4.pack(side=RIGHT)
-        self.rightw3 = Frame(newWindowaddf, width=540, height=500, bg='lightblue')
-        self.rightw3.pack(side=LEFT)
-
-        self.n3 = Label(self.rightw3, text="Danh Mục Chẩn Đoán:", font=('arial 14 bold'), fg='black', bg='lightblue')
-        self.n3.place(x=10, y=10)
-
-        self.ad_if2 = Entry(self.rightw3, font=('arial 28 bold'), width=16)
-        self.ad_if2.place(x=188, y=39)
-
-        # self.n4 = Label(self.rightw3, text="Danh Mục:", font=('arial 14 bold'), fg='black', bg='lightblue')
-        # self.n4.place(x=10, y=90)
-
-        self.droplist1 = OptionMenu(self.rightw3, c1, 'TAI', 'MŨI', 'HỌNG')
-        self.droplist1.pack()
-
-        self.menu = self.droplist1.nametowidget(self.droplist1.menuname)
-        self.menu.configure(font=('arial 28 bold'))
-        c1.set('HỌNG')
-
-        self.droplist1.config(width=9, height=1, font=('arial 20 bold'))
-        self.droplist1.place(x=5, y=40)
-
-        self.add_ifmt = Button(self.rightw3, text="Cập nhật", width=12, height=2, font=('arial 18 bold'), bg='orange',
-                               command=self.database_print111)
-        self.add_ifmt.place(x=5, y=90)
-
-        self.n4 = Label(self.rightw3, text="Phương Pháp Điều Trị:", font=('arial 14 bold'), fg='black', bg='lightblue')
-        self.n4.place(x=10, y=185)
-
-        self.ad_j2 = Entry(self.rightw3, font=('arial 28 bold'), width=24)
-        self.ad_j2.place(x=10, y=215)
-
-        self.add_ifmj = Button(self.rightw3, text="Cập nhật", width=12, height=2, font=('arial 18 bold'), bg='orange',
-                               command=self.database_printnn1)
-        self.add_ifmj.place(x=5, y=270)
-
-        self.add_dltifmtjj = Button(self.rightw3, text="Xóa", width=16, height=2, font=('arial 18 bold'),
-                                  bg='orange', command=self.Deletedata_NewWindow)
-        self.add_dltifmtjj.place(x=120, y=390)
-
-        # self.add_dltd = Button(self.rightw3, text="Đóng", width=14, height=2, font=('arial 20 bold'),
-        #                        bg='orange', command=self.quit_print1)
-        # self.add_dltd.place(x=5, y=400)
-        scrollbary = Scrollbar(self.rightw2, orient=VERTICAL)
-        scrollbarx = Scrollbar(self.rightw2, orient=HORIZONTAL)
-        self.tree2 = ttk.Treeview(self.rightw2, columns=("Danh Mục", "Chẩn Đoán"),
-                                  selectmode="extended", height=250, yscrollcommand=scrollbary.set,
-                                  xscrollcommand=scrollbarx.set)
-        scrollbary.config(command=self.tree2.yview)
-        scrollbary.pack(side=RIGHT, fill=Y)
-        scrollbarx.config(command=self.tree2.xview)
-        scrollbarx.pack(side=BOTTOM, fill=X)
-        self.tree2.heading('Danh Mục', text="Danh Mục", anchor=W)
-        self.tree2.heading('Chẩn Đoán', text="Chẩn Đoán", anchor=W)
-        self.tree2.column('#0', stretch=NO, minwidth=0, width=0)
-        self.tree2.column('#1', stretch=NO, minwidth=0, width=200)
-        self.tree2.column('#2', stretch=NO, minwidth=0, width=0)
-        self.tree2.pack()
-
-        scrollbary = Scrollbar(self.rightw4, orient=VERTICAL)
-        scrollbarx = Scrollbar(self.rightw4, orient=HORIZONTAL)
-        self.tree4 = ttk.Treeview(self.rightw4, columns=("Danh Mục Chẩn Đoán", "Nghề Nghiệp"),
-                                  selectmode="extended", height=250, yscrollcommand=scrollbary.set,
-                                  xscrollcommand=scrollbarx.set)
-        scrollbary.config(command=self.tree4.yview)
-        scrollbary.pack(side=RIGHT, fill=Y)
-        scrollbarx.config(command=self.tree2.xview)
-        scrollbarx.pack(side=BOTTOM, fill=X)
-        self.tree4.heading('Danh Mục Chẩn Đoán', text="Danh Mục Chẩn Đoán", anchor=W)
-        self.tree4.heading('Nghề Nghiệp', text="Nghề Nghiệp", anchor=W)
-        self.tree4.column('#0', stretch=NO, minwidth=0, width=0)
-        self.tree4.column('#1', stretch=NO, minwidth=0, width=0)
-        self.tree4.column('#2', stretch=NO, minwidth=0, width=195)
-        self.tree4.pack()
-
-        conn = sqlite3.connect("db_member.db")
-        cursor = conn.cursor()
-        cursor1 = conn.cursor()
-        cursor.execute("SELECT * FROM `print_dt22`")
-        fetch = cursor.fetchall()
-        cursor1.execute("SELECT * FROM `print_jb22`")
-        fetch1 = cursor1.fetchall()
-        for data in fetch:
-            self.tree2.insert('', 'end', values=(data))
-        for data1 in fetch1:
-            self.tree4.insert('', 'end', values=(data1))
-        cursor.close()
-        conn.close()
+        
+        #root.update()
+        #root.deiconify()
     def Deletedata_NewWindow(self):
         conn = sqlite3.connect("db_member.db")
         cursor = conn.cursor()
@@ -742,27 +881,18 @@ class Application:
         cursor.close()
 
     def quit(self):
-        root.withdraw()
-        root.destroy()
-        # root1.destroy()
-        # root2.destroy()
-
-    # def quit_print1(self):
-    #
-    #     tkinter.messagebox.showinfo("Success", "Thoát cài đặt danh mục")
-    #     # root1.withdraw()
-    #
-    # def quit_print2(self):
-    #     # root2.withdraw()
-    #     tkinter.messagebox.showinfo("Success", "Thoát cài đặt biểu mẫu")
-    #
-    # def hide(self):
-    #     root.withdraw()
-    #
-    # def show(self):
-    #     root.update()
-    #     root.deiconify()
-
+        if platform.system() == 'Linux':
+            
+            command = 'sudo shutdown -P +' + '0'
+        else:
+            command = 'echo "os not compatible"'
+        os.system(command) 
+        
+#         root.withdraw()
+#         root.destroy()
+  
+   
+        
     def create_pdf1(self):
         # Set up a logo
         conn = sqlite3.connect("db_member.db")
@@ -779,8 +909,8 @@ class Application:
 
 
     def endoscopy(self):
-
-
+#         root.overrideredirect(False)
+#
         class Window2(QMainWindow):  # <===
 
             def __init__(self):
@@ -797,6 +927,7 @@ class Application:
                 self.left = 0
                 self.width = 1000
                 self.height = 560
+                
                 self.listWidget = QtWidgets.QListWidget(self)
                 self.listWidget.setGeometry(QtCore.QRect(680, 5, 300, 545))  # (2, 115, 213, 475))
                 self.listWidget.setObjectName("ListWidgetItem")
@@ -1255,8 +1386,8 @@ class Application:
         class video(QtWidgets.QDialog, Ui_Form):
 
             def __init__(self):
-
-
+#                 root.overrideredirect(False)
+                root.withdraw()
                 super().__init__()
                 self.value = 0  # ---
                 self.value1 = 0
@@ -1297,6 +1428,9 @@ class Application:
                     self.cap = cv2.VideoCapture(0)
                     # self.imgLabel.setText("No Single")
                 self.timer.start()
+                font = QFont('Times', 42)
+                self.imgLabel.setFont(font)
+                self.imgLabel.setText("No Single : Kiểm Tra Tín Hiệu !")
 
                 # else:
                 # self.imgLabel.setText("No Single")
@@ -1309,142 +1443,142 @@ class Application:
                 # time.sleep(2.0)
                 if ret == True:
                     # image =cv2.resize(image, (320, 256))
-                    image = cv2.resize(image, (1920, 1080))
-                    # image = cv2.flip(image, 1)
-                    # frame1 = cv2.resize(image, (416, 416))
-                    frame2 = cv2.resize(image, (200, 150))
-                    # frame1 = imutils.resize(image, width=640, height=480)
-                    # (H, W) = frame1.shape[:2]
-                    height, width, channels = image.shape
-                    # Detecting objects
-                    blob = cv2.dnn.blobFromImage(image, 0.00392, (416, 416), (0, 0, 0), True, crop=False)
-                   #  blob = cv2.dnn.blobFromImage(image, 0.00392, (320,224), (0, 0, 0), True, crop=False)
-                    net.setInput(blob)
-                    outs = net.forward(output_layers)
-                    # Showing informations on the screen
-                    class_ids = []
-                    confidences = []
-                    boxes = []
-
-                    for out in outs:
-                        for detection in out:
-                            scores = detection[5:]
-                            class_id = np.argmax(scores)
-                            confidence = scores[class_id]
-                            if confidence > 0.88:
-                                # Object detected
-                                center_x = int(detection[0] * width)
-                                center_y = int(detection[1] * height)
-                                w = int(detection[2] * width)
-                                h = int(detection[3] * height)
-                                # Rectangle coordinates
-                                x = int(center_x - w / 2)
-                                y = int(center_y - h / 2)
-                                boxes.append([x, y, w, h])
-                                confidences.append(float(confidence))
-                                class_ids.append(class_id)
-                    indexes = cv2.dnn.NMSBoxes(boxes, confidences, 0.4, 0.3)
-                    for i in range(len(boxes)):
-                        if i in indexes:
-                            label = str(classes[class_ids[i]])
-                            # cv2.putText(image, label , (20,20), font, 2,(255, 255, 255), 2)
-                            # print(label)
-                            # print(class_ids[i])
-                            confidence = confidences[i]
-                            # color = colors[class_ids[i]]
-                            cv2.putText(image, label + " " + str(round(confidence, 2)), (x, y + 30), font, 3,
-                                        (255, 255, 255), 3)
-                            # elapsed_time = time.time() - starting_time
-                            # fps = frame_id / elapsed_time
-                            # cv2.putText(image, "FPS: " + str(round(fps, 2)), (10, 50), font, 3, (0, 0, 255), 3)
-
-                            if self.value < 6 and class_ids[i]==0:
-                                self.value = self.value + 1
-                                conn = sqlite3.connect("db_member.db")
-                                conn.row_factory = sqlite3.Row
-                                cur = conn.cursor()
-                                cur.execute("SELECT max(id) FROM member")
-                                rows = cur.fetchall()
-                                directory = "anh/"
-                                if not os.path.exists(directory):
-                                    os.makedirs(directory)
-                                for row in rows:
-                                    row["max(id)"]
-                                cv2.imwrite('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.value)), frame2)
-                                # self.TEXT.setText('your Image have been Saved')
-                                self.label = QLabel(self)
-
-                                self.it.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.value))))
-                                self.it1.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.value))))
-                                self.it2.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.value))))
-                                self.it3.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.value))))
-                                self.it4.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.value))))
-                                self.it5.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.value))))
-
-                                self.TEXT.setText('anh/%s.png' % (label)+ str(self.value))
-
-                            if self.valueh < 12 and class_ids[i] == 1:
-                                self.valueh = self.valueh + 1
-                                conn = sqlite3.connect("db_member.db")
-                                conn.row_factory = sqlite3.Row
-                                cur = conn.cursor()
-                                cur.execute("SELECT max(id) FROM member")
-                                rows = cur.fetchall()
-                                directory = "anh/"
-                                if not os.path.exists(directory):
-                                    os.makedirs(directory)
-                                for row in rows:
-                                    row["max(id)"]
-                                cv2.imwrite('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valueh)), frame2)
-                                # self.TEXT.setText('your Image have been Saved')
-                                self.label = QLabel(self)
-
-                                self.it6.setIcon(
-                                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valueh))))
-                                self.it7.setIcon(
-                                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valueh))))
-                                self.it8.setIcon(
-                                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valueh))))
-                                self.it9.setIcon(
-                                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valueh))))
-                                self.it10.setIcon(
-                                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valueh))))
-                                self.it11.setIcon(
-                                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valueh))))
-
-                                self.TEXT.setText('anh/%s.png' % (label) + str(str(self.valueh)))
-
-                            if self.valuem < 18 and class_ids[i] == 2:
-                                self.valuem = self.valuem + 1
-                                conn = sqlite3.connect("db_member.db")
-                                conn.row_factory = sqlite3.Row
-                                cur = conn.cursor()
-                                cur.execute("SELECT max(id) FROM member")
-                                rows = cur.fetchall()
-                                directory = "anh/"
-                                if not os.path.exists(directory):
-                                    os.makedirs(directory)
-                                for row in rows:
-                                    row["max(id)"]
-                                cv2.imwrite('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valuem)), frame2)
-                                # self.TEXT.setText('your Image have been Saved')
-                                self.label = QLabel(self)
-
-                                self.it12.setIcon(
-                                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valuem))))
-                                self.it13.setIcon(
-                                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valuem))))
-                                self.it14.setIcon(
-                                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valuem))))
-                                self.it15.setIcon(
-                                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valuem))))
-                                self.it16.setIcon(
-                                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valuem))))
-                                self.it17.setIcon(
-                                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valuem))))
-
-                                self.TEXT.setText('anh/%s.png' % (label) + str(self.valuem))
-
+                    image = cv2.resize(image, (960, 540))
+#                     # image = cv2.flip(image, 1)
+#                     # frame1 = cv2.resize(image, (416, 416))
+#                     frame2 = cv2.resize(image, (200, 150))
+#                     # frame1 = imutils.resize(image, width=640, height=480)
+#                     # (H, W) = frame1.shape[:2]
+#                     height, width, channels = image.shape
+#                     # Detecting objects
+#                     blob = cv2.dnn.blobFromImage(image, 0.00392, (416, 416), (0, 0, 0), True, crop=False)
+#                    #  blob = cv2.dnn.blobFromImage(image, 0.00392, (320,224), (0, 0, 0), True, crop=False)
+#                     net.setInput(blob)
+#                     outs = net.forward(output_layers)
+#                     # Showing informations on the screen
+#                     class_ids = []
+#                     confidences = []
+#                     boxes = []
+# 
+#                     for out in outs:
+#                         for detection in out:
+#                             scores = detection[5:]
+#                             class_id = np.argmax(scores)
+#                             confidence = scores[class_id]
+#                             if confidence > 0.88:
+#                                 # Object detected
+#                                 center_x = int(detection[0] * width)
+#                                 center_y = int(detection[1] * height)
+#                                 w = int(detection[2] * width)
+#                                 h = int(detection[3] * height)
+#                                 # Rectangle coordinates
+#                                 x = int(center_x - w / 2)
+#                                 y = int(center_y - h / 2)
+#                                 boxes.append([x, y, w, h])
+#                                 confidences.append(float(confidence))
+#                                 class_ids.append(class_id)
+#                     indexes = cv2.dnn.NMSBoxes(boxes, confidences, 0.4, 0.3)
+#                     for i in range(len(boxes)):
+#                         if i in indexes:
+#                             label = str(classes[class_ids[i]])
+#                             # cv2.putText(image, label , (20,20), font, 2,(255, 255, 255), 2)
+#                             # print(label)
+#                             # print(class_ids[i])
+#                             confidence = confidences[i]
+#                             # color = colors[class_ids[i]]
+#                             cv2.putText(image, label + " " + str(round(confidence, 2)), (x, y + 30), font, 3,
+#                                         (255, 255, 255), 3)
+#                             # elapsed_time = time.time() - starting_time
+#                             # fps = frame_id / elapsed_time
+#                             # cv2.putText(image, "FPS: " + str(round(fps, 2)), (10, 50), font, 3, (0, 0, 255), 3)
+# 
+#                             if self.value < 6 and class_ids[i]==0:
+#                                 self.value = self.value + 1
+#                                 conn = sqlite3.connect("db_member.db")
+#                                 conn.row_factory = sqlite3.Row
+#                                 cur = conn.cursor()
+#                                 cur.execute("SELECT max(id) FROM member")
+#                                 rows = cur.fetchall()
+#                                 directory = "anh/"
+#                                 if not os.path.exists(directory):
+#                                     os.makedirs(directory)
+#                                 for row in rows:
+#                                     row["max(id)"]
+#                                 cv2.imwrite('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.value)), frame2)
+#                                 # self.TEXT.setText('your Image have been Saved')
+#                                 self.label = QLabel(self)
+# 
+#                                 self.it.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.value))))
+#                                 self.it1.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.value))))
+#                                 self.it2.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.value))))
+#                                 self.it3.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.value))))
+#                                 self.it4.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.value))))
+#                                 self.it5.setIcon(QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.value))))
+# 
+#                                 self.TEXT.setText('anh/%s.png' % (label)+ str(self.value))
+# 
+#                             if self.valueh < 12 and class_ids[i] == 1:
+#                                 self.valueh = self.valueh + 1
+#                                 conn = sqlite3.connect("db_member.db")
+#                                 conn.row_factory = sqlite3.Row
+#                                 cur = conn.cursor()
+#                                 cur.execute("SELECT max(id) FROM member")
+#                                 rows = cur.fetchall()
+#                                 directory = "anh/"
+#                                 if not os.path.exists(directory):
+#                                     os.makedirs(directory)
+#                                 for row in rows:
+#                                     row["max(id)"]
+#                                 cv2.imwrite('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valueh)), frame2)
+#                                 # self.TEXT.setText('your Image have been Saved')
+#                                 self.label = QLabel(self)
+# 
+#                                 self.it6.setIcon(
+#                                     QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valueh))))
+#                                 self.it7.setIcon(
+#                                     QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valueh))))
+#                                 self.it8.setIcon(
+#                                     QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valueh))))
+#                                 self.it9.setIcon(
+#                                     QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valueh))))
+#                                 self.it10.setIcon(
+#                                     QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valueh))))
+#                                 self.it11.setIcon(
+#                                     QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valueh))))
+# 
+#                                 self.TEXT.setText('anh/%s.png' % (label) + str(str(self.valueh)))
+# 
+#                             if self.valuem < 18 and class_ids[i] == 2:
+#                                 self.valuem = self.valuem + 1
+#                                 conn = sqlite3.connect("db_member.db")
+#                                 conn.row_factory = sqlite3.Row
+#                                 cur = conn.cursor()
+#                                 cur.execute("SELECT max(id) FROM member")
+#                                 rows = cur.fetchall()
+#                                 directory = "anh/"
+#                                 if not os.path.exists(directory):
+#                                     os.makedirs(directory)
+#                                 for row in rows:
+#                                     row["max(id)"]
+#                                 cv2.imwrite('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valuem)), frame2)
+#                                 # self.TEXT.setText('your Image have been Saved')
+#                                 self.label = QLabel(self)
+# 
+#                                 self.it12.setIcon(
+#                                     QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valuem))))
+#                                 self.it13.setIcon(
+#                                     QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valuem))))
+#                                 self.it14.setIcon(
+#                                     QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valuem))))
+#                                 self.it15.setIcon(
+#                                     QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valuem))))
+#                                 self.it16.setIcon(
+#                                     QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valuem))))
+#                                 self.it17.setIcon(
+#                                     QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valuem))))
+# 
+#                                 self.TEXT.setText('anh/%s.png' % (label) + str(self.valuem))
+# 
 
 
                     self.displayImage(image, True)
@@ -1455,8 +1589,9 @@ class Application:
             def capture_image(self):
 
                 flag, frame = self.cap.read()
-                frame = imutils.resize(frame, width=240, height=170)
+                
                 if flag == True and self.value1 < 18:
+                    frame = imutils.resize(frame, width=240, height=170)
                     self.value1 = self.value1 + 1
                     conn = sqlite3.connect("db_member.db")
                     conn.row_factory = sqlite3.Row
@@ -1515,98 +1650,10 @@ class Application:
 
             def window2(self):  # <===
                 self.w = Window2()
+#                 self.w.(True)
                 self.w.show()
-                # self.hide()
-
-            # def call(self, qList):
-            #     checkedItem = 0
-            #     for index in range(self.listWidget.count()):
-            #         if self.listWidget.item(index).checkState() == Qt.Checked:
-            #             checkedItem += 1
-            #     print(str(checkedItem))
-            #
-            #     # imn =[str(item.text()) for item in self.listWidget.selectedItems()]
-            #     # print(imn)
-            #     # print(imn[5])
-            #     # #self.on_change()
-            #
-            # def on_change(self):
-            #     #print("start")
-            #     inn=str([item.text() for item in self.listWidget.selectedItems()])
-            #     #print(inn)
-            #     k=inn[2:4]
-            #     self.kk=int(k)
-            #     print(self.kk)
-            #     if self.kk==1:
-            #         self.item.setCheckState(1)
-            #         self.anh1=16
-            #     if self.kk==2:
-            #         self.item1.setCheckState(1)
-            #     if self.kk == 3:
-            #         self.item2.setCheckState(1)
-            #     if self.kk == 4:
-            #         self.item3.setCheckState(1)
-            #     if self.kk == 5:
-            #         self.item4.setCheckState(1)
-            #     if self.kk == 6:
-            #         self.item5.setCheckState(1)
-            #
-            #     if self.kk == 7:
-            #         self.item6.setCheckState(1)
-            #     if self.kk == 8:
-            #         self.item7.setCheckState(1)
-            #     if self.kk == 9:
-            #         self.item8.setCheckState(1)
-            #     if self.kk == 10:
-            #         self.item9.setCheckState(1)
-            #     if self.kk == 11:
-            #         self.item10.setCheckState(1)
-            #     if self.kk == 12:
-            #         self.item11.setCheckState(1)
-            #
-            #     if self.kk == 13:
-            #         self.item12.setCheckState(1)
-            #     if self.kk == 14:
-            #         self.item13.setCheckState(1)
-            #     if self.kk == 15:
-            #         self.item14.setCheckState(1)
-            #     if self.kk == 16:
-            #         self.item15.setCheckState(1)
-            #     if self.kk == 17:
-            #         self.item16.setCheckState(1)
-            #     if self.kk == 18:
-            #         self.item17.setCheckState(1)
-
-            # v = checkedItem + 4
-            # print(str(v))
-
-            # def select_camera(self, i):
-            #
-            #     # getting the selected camera
-            #     self.camera = QCamera(self.available_cameras[i])
-            #     # setting view finder to the camera
-            #     self.camera.setViewfinder(self.viewfinder)
-            #     # setting capture mode to the camera
-            #     self.camera.setCaptureMode(QCamera.CaptureStillImage)
-            #     # if any error occur show the alert
-            #     self.camera.error.connect(lambda: self.alert(self.camera.errorString()))
-            #     # start the camera
-            #     self.camera.start()
-            #     # creating a QCameraImageCapture object
-            #     self.capture = QCameraImageCapture(self.camera)
-            #     # showing alert if error occur
-            #     self.capture.error.connect(lambda error_msg, error,
-            #                                       msg: self.alert(msg))
-            #
-            #     # when image captured showing message
-            #     self.capture.imageCaptured.connect(lambda d,
-            #                                               i: self.status.showMessage("Image captured : "
-            #                                                                          + str(self.save_seq)))
-            #     # getting current camera name
-            #     self.current_camera_name = self.available_cameras[i].description()
-            #     # inital save sequence
-            #     self.save_seq = 0
-
+                
+                
             def displayImage(self, img, window=True):
                 qformat = QtGui.QImage.Format_Indexed8
                 if len(img.shape) == 3:
@@ -1622,23 +1669,26 @@ class Application:
             def w1(self):
                 window.close()
                 self.cap.release()
+                root.update()
+                root.deiconify()
 
+        
+        
         window = video()
-        window.setGeometry(0, 0, 1024, 600)
+        window.setGeometry(0, 0, 1024, 570)
+#         window.overrideredirect(True)
         window.show()
+        
+    
         try:
             sys.exit(app.exec_())
         except:
-            print('excitng')
+            logic1 = 1
 
 
 app = QApplication(sys.argv)
+# root.overrideredirect(True)root.overrideredirect(True)
 root.geometry("1024x600+0+0")
 b = Application(root)
 root.mainloop()
-
-
-
-
-
 

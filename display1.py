@@ -22,10 +22,13 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 import subprocess
-import platform
 import re
 
 # Load Yolo
+# net = cv2.dnn.readNet("yolov3-tiny_last.weights", "yolov3-tiny.cfg")
+# classes = []
+# with open("classes3.txt", "r") as f:
+#     classes = [line.strip() for line in f.readlines()]
 net = cv2.dnn.readNet("yolov3-tiny_final.weights", "yolov3Copy.cfg")
 classes = []
 with open("classes4.txt", "r") as f:
@@ -51,15 +54,13 @@ root = Tk()
 # root1 = Tk()
 # root2 = Tk()
 root.title("COMPANY BOSSCCOM")
-addWindow = Toplevel(root)
-addWindow.title("Set form print")
-addWindow.overrideredirect(True)
-addWindow.geometry("980x550+0+0")
-
 newWindowaddf = Toplevel(root)
 newWindowaddf.title("add infomation")
 newWindowaddf.geometry("980x550+0+0")
-newWindowaddf.overrideredirect(True)
+
+addWindow = tk.Tk()
+addWindow.title("Set form print")
+addWindow.geometry("980x550+0+0")
 
 labels_list = []
 var = IntVar()

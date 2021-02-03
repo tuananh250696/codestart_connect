@@ -352,8 +352,10 @@ class Application:
             self.bt_st_catalog = Button(self.left, text="Cập Nhật Mã Active", width=20, height=4, font=('arial 14 bold'),bg='orange',command=self.database_1)
             self.bt_st_catalog.place(x=100, y=420)
 
-            self.bt_exit1 = Button(self.left, text="Đóng", width=20, height=4, font=('arial 14 bold'), bg='orange', command=self.quit)
+            self.bt_exit1 = Button(self.left, text="Đóng", width=20, height=4, font=('arial 14 bold'), bg='orange', command=self.quitdd)
             self.bt_exit1.place(x=355, y=420)
+            addWindow.withdraw()
+            newWindowaddf.withdraw()
         
  
 
@@ -761,6 +763,10 @@ class Application:
         addWindow.withdraw()
         #addWindow.destroy()
         self.show()
+    def quitdd(self):
+        root.withdraw()
+        root.destroy()
+        
     
     def createNewWindow(self):
         root.withdraw()

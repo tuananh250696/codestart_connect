@@ -208,4 +208,3 @@ class Ui_Form(object):
         self.NEXT_3.setText(_translate("Dialog", "Chẩn Đoán"))
         self.NEXT_3c.setText(_translate("Dialog", "Chụp ảnh thủ công"))
         self.NEXT_7.setText(_translate("Dialog", "Đóng"))
-

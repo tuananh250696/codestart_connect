@@ -32,6 +32,7 @@ import re
 net = cv2.dnn.readNet("yolov3-tiny_final.weights", "yolov3Copy.cfg")
 classes = []
 with open("classes4.txt", "r") as f:
+    
     classes = [line.strip() for line in f.readlines()]
 layer_names = net.getLayerNames()
 output_layers = [layer_names[i[0] - 1] for i in net.getUnconnectedOutLayers()]
@@ -187,7 +188,7 @@ class Application:
             self.bt_st_catalog.place(x=100, y=420)
 
             self.bt_exit1 = Button(self.left, text="Đóng", width=20, height=4, font=('arial 14 bold'), bg='orange',
-                                   command=self.quitdd)
+                                   command=self.quit)
             self.bt_exit1.place(x=355, y=420)
             addWindow.withdraw()
             newWindowaddf.withdraw()
@@ -1680,12 +1681,13 @@ class Application:
                 self.camera_selector.addItem("  CAMERA USB3.0")
                 # self.camera_selector.add Items([camera.description()
                 #                                for camera in self.available_cameras])
-                self.camera_selector1.addItem("  Chụp Thủ Công ")
-                self.camera_selector1.addItem("  Chụp Tự Động")
-                self.camera_selector.currentIndexChanged.connect(self.select_camera)
+                # self.camera_selector1.addItem("  Chụp Thủ Công ")
+                # self.camera_selector1.addItem("  Chụp Tự Động")
+                #self.camera_selector.currentIndexChanged.connect(self.select_camera)
                 # self.camera_selector.stateChanged.connect(self.select_camera)
 
                 self.NEXT_7.clicked.connect(self.w1)
+                self.NEXT_3c.clicked.connect(self.cw1)
                 self.imgLabel.setScaledContents(True)
                 self.cap = None  # -capture <-> +cap
                 self.timer = QtCore.QTimer(self, interval=5)
@@ -1714,16 +1716,14 @@ class Application:
                 # self.imgLabel.setText("No Single")
 
             @QtCore.pyqtSlot()
-            def select_camera(self):
-
-                print()
 
             def update_frame(self):
                 ret, image = self.cap.read()
                 # Define the codec and create VideoWriter object
                 # image = imutils.resize(image, width=320, height=256)
                 # time.sleep(2.0)
-                if ret == True:
+
+                if ret == True :
                     # image =cv2.resize(image, (320, 256))
                     image = cv2.resize(image, (960, 540))
                     # image = cv2.flip(image, 1)
@@ -1731,141 +1731,158 @@ class Application:
                     frame2 = cv2.resize(image, (200, 150))
                     # frame1 = imutils.resize(image, width=640, height=480)
                     # (H, W) = frame1.shape[:2]
-                    height, width, channels = image.shape
-                    # Detecting objects
-                    blob = cv2.dnn.blobFromImage(image, 0.00392, (416, 416), (0, 0, 0), True, crop=False)
-                    #  blob = cv2.dnn.blobFromImage(image, 0.00392, (320,224), (0, 0, 0), True, crop=False)
-                    net.setInput(blob)
-                    outs = net.forward(output_layers)
-                    # Showing informations on the screen
-                    class_ids = []
-                    confidences = []
-                    boxes = []
 
-                    for out in outs:
-                        for detection in out:
-                            scores = detection[5:]
-                            class_id = np.argmax(scores)
-                            confidence = scores[class_id]
-                            if confidence > 0.78:
-                                # Object detected
-                                center_x = int(detection[0] * width)
-                                center_y = int(detection[1] * height)
-                                w = int(detection[2] * width)
-                                h = int(detection[3] * height)
-                                # Rectangle coordinates
-                                x = int(center_x - w / 2)
-                                y = int(center_y - h / 2)
-                                boxes.append([x, y, w, h])
-                                confidences.append(float(confidence))
-                                class_ids.append(class_id)
-                    indexes = cv2.dnn.NMSBoxes(boxes, confidences, 0.4, 0.3)
-                    for i in range(len(boxes)):
-                        if i in indexes:
-                            label = str(classes[class_ids[i]])
-                            # cv2.putText(image, label , (20,20), font, 2,(255, 255, 255), 2)
-                            # print(label)
-                            # print(class_ids[i])
-                            confidence = confidences[i]
-                            # color = colors[class_ids[i]]
-                            cv2.putText(image, label + " " + str(round(confidence, 2)), (x, y + 30), font, 3,
-                                        (255, 255, 255), 3)
-                            # elapsed_time = time.time() - starting_time
-                            # fps = frame_id / elapsed_time
-                            # cv2.putText(image, "FPS: " + str(round(fps, 2)), (10, 50), font, 3, (0, 0, 255), 3)
+                    if self.valuea == 2:
+                        height, width, channels = image.shape
+                        # Detecting objects
+                        blob = cv2.dnn.blobFromImage(image, 0.00392, (416, 416), (0, 0, 0), True, crop=False)
+                        #  blob = cv2.dnn.blobFromImage(image, 0.00392, (320,224), (0, 0, 0), True, crop=False)
+                        net.setInput(blob)
+                        outs = net.forward(output_layers)
+                        # Showing informations on the screen
+                        class_ids = []
+                        confidences = []
+                        boxes = []
+                        for out in outs:
+                            for detection in out:
+                                scores = detection[5:]
+                                class_id = np.argmax(scores)
+                                confidence = scores[class_id]
+                                if confidence > 0.78:
+                                    # Object detected
+                                    center_x = int(detection[0] * width)
+                                    center_y = int(detection[1] * height)
+                                    w = int(detection[2] * width)
+                                    h = int(detection[3] * height)
+                                    # Rectangle coordinates
+                                    x = int(center_x - w / 2)
+                                    y = int(center_y - h / 2)
+                                    boxes.append([x, y, w, h])
+                                    confidences.append(float(confidence))
+                                    class_ids.append(class_id)
+                        indexes = cv2.dnn.NMSBoxes(boxes, confidences, 0.4, 0.3)
+                        for i in range(len(boxes)):
+                            if i in indexes:
+                                label = str(classes[class_ids[i]])
+                                # cv2.putText(image, label , (20,20), font, 2,(255, 255, 255), 2)
+                                # print(label)
+                                # print(class_ids[i])
+                                confidence = confidences[i]
+                                # color = colors[class_ids[i]]
+                                cv2.putText(image, label + " " + str(round(confidence, 2)), (x, y + 30), font, 3,
+                                            (255, 255, 255), 3)
+                                # elapsed_time = time.time() - starting_time
+                                # fps = frame_id / elapsed_time
+                                # cv2.putText(image, "FPS: " + str(round(fps, 2)), (10, 50), font, 3, (0, 0, 255), 3)
 
-                            if self.value < 6 and class_ids[i] == 0:
-                                self.value = self.value + 1
-                                conn = sqlite3.connect("db_member.db")
-                                conn.row_factory = sqlite3.Row
-                                cur = conn.cursor()
-                                cur.execute("SELECT max(id) FROM member")
-                                rows = cur.fetchall()
-                                directory = "anh/"
-                                if not os.path.exists(directory):
-                                    os.makedirs(directory)
-                                for row in rows:
-                                    row["max(id)"]
-                                cv2.imwrite('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.value)), frame2)
-                                # self.TEXT.setText('your Image have been Saved')
-                                self.label = QLabel(self)
+                                if self.value < 6 and class_ids[i] == 0:
+                                    self.value = self.value + 1
+                                    conn = sqlite3.connect("db_member.db")
+                                    conn.row_factory = sqlite3.Row
+                                    cur = conn.cursor()
+                                    cur.execute("SELECT max(id) FROM member")
+                                    rows = cur.fetchall()
+                                    directory = "anh/"
+                                    if not os.path.exists(directory):
+                                        os.makedirs(directory)
+                                    for row in rows:
+                                        row["max(id)"]
+                                    cv2.imwrite('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.value)),
+                                                frame2)
+                                    # self.TEXT.setText('your Image have been Saved')
+                                    self.label = QLabel(self)
 
-                                self.it.setIcon(
-                                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.value))))
-                                self.it1.setIcon(
-                                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.value))))
-                                self.it2.setIcon(
-                                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.value))))
-                                self.it3.setIcon(
-                                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.value))))
-                                self.it4.setIcon(
-                                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.value))))
-                                self.it5.setIcon(
-                                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.value))))
+                                    self.it.setIcon(
+                                        QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.value))))
+                                    self.it1.setIcon(
+                                        QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.value))))
+                                    self.it2.setIcon(
+                                        QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.value))))
+                                    self.it3.setIcon(
+                                        QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.value))))
+                                    self.it4.setIcon(
+                                        QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.value))))
+                                    self.it5.setIcon(
+                                        QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.value))))
 
-                                self.TEXT.setText('anh/%s.png' % (label) + str(self.value))
+                                    self.TEXT.setText('anh/%s.png' % (label) + str(self.value))
 
-                            if self.valueh < 12 and class_ids[i] == 1:
-                                self.valueh = self.valueh + 1
-                                conn = sqlite3.connect("db_member.db")
-                                conn.row_factory = sqlite3.Row
-                                cur = conn.cursor()
-                                cur.execute("SELECT max(id) FROM member")
-                                rows = cur.fetchall()
-                                directory = "anh/"
-                                if not os.path.exists(directory):
-                                    os.makedirs(directory)
-                                for row in rows:
-                                    row["max(id)"]
-                                cv2.imwrite('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valueh)), frame2)
-                                # self.TEXT.setText('your Image have been Saved')
-                                self.label = QLabel(self)
+                                if self.valueh < 12 and class_ids[i] == 1:
+                                    self.valueh = self.valueh + 1
+                                    conn = sqlite3.connect("db_member.db")
+                                    conn.row_factory = sqlite3.Row
+                                    cur = conn.cursor()
+                                    cur.execute("SELECT max(id) FROM member")
+                                    rows = cur.fetchall()
+                                    directory = "anh/"
+                                    if not os.path.exists(directory):
+                                        os.makedirs(directory)
+                                    for row in rows:
+                                        row["max(id)"]
+                                    cv2.imwrite('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valueh)),
+                                                frame2)
+                                    # self.TEXT.setText('your Image have been Saved')
+                                    self.label = QLabel(self)
 
-                                self.it6.setIcon(
-                                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valueh))))
-                                self.it7.setIcon(
-                                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valueh))))
-                                self.it8.setIcon(
-                                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valueh))))
-                                self.it9.setIcon(
-                                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valueh))))
-                                self.it10.setIcon(
-                                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valueh))))
-                                self.it11.setIcon(
-                                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valueh))))
+                                    self.it6.setIcon(
+                                        QtGui.QIcon(
+                                            'anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valueh))))
+                                    self.it7.setIcon(
+                                        QtGui.QIcon(
+                                            'anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valueh))))
+                                    self.it8.setIcon(
+                                        QtGui.QIcon(
+                                            'anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valueh))))
+                                    self.it9.setIcon(
+                                        QtGui.QIcon(
+                                            'anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valueh))))
+                                    self.it10.setIcon(
+                                        QtGui.QIcon(
+                                            'anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valueh))))
+                                    self.it11.setIcon(
+                                        QtGui.QIcon(
+                                            'anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valueh))))
 
-                                self.TEXT.setText('anh/%s.png' % (label) + str(str(self.valueh)))
+                                    self.TEXT.setText('anh/%s.png' % (label) + str(str(self.valueh)))
 
-                            if self.valuem < 18 and class_ids[i] == 2:
-                                self.valuem = self.valuem + 1
-                                conn = sqlite3.connect("db_member.db")
-                                conn.row_factory = sqlite3.Row
-                                cur = conn.cursor()
-                                cur.execute("SELECT max(id) FROM member")
-                                rows = cur.fetchall()
-                                directory = "anh/"
-                                if not os.path.exists(directory):
-                                    os.makedirs(directory)
-                                for row in rows:
-                                    row["max(id)"]
-                                cv2.imwrite('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valuem)), frame2)
-                                # self.TEXT.setText('your Image have been Saved')
-                                self.label = QLabel(self)
+                                if self.valuem < 18 and class_ids[i] == 2:
+                                    self.valuem = self.valuem + 1
+                                    conn = sqlite3.connect("db_member.db")
+                                    conn.row_factory = sqlite3.Row
+                                    cur = conn.cursor()
+                                    cur.execute("SELECT max(id) FROM member")
+                                    rows = cur.fetchall()
+                                    directory = "anh/"
+                                    if not os.path.exists(directory):
+                                        os.makedirs(directory)
+                                    for row in rows:
+                                        row["max(id)"]
+                                    cv2.imwrite('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valuem)),
+                                                frame2)
+                                    # self.TEXT.setText('your Image have been Saved')
+                                    self.label = QLabel(self)
 
-                                self.it12.setIcon(
-                                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valuem))))
-                                self.it13.setIcon(
-                                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valuem))))
-                                self.it14.setIcon(
-                                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valuem))))
-                                self.it15.setIcon(
-                                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valuem))))
-                                self.it16.setIcon(
-                                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valuem))))
-                                self.it17.setIcon(
-                                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valuem))))
+                                    self.it12.setIcon(
+                                        QtGui.QIcon(
+                                            'anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valuem))))
+                                    self.it13.setIcon(
+                                        QtGui.QIcon(
+                                            'anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valuem))))
+                                    self.it14.setIcon(
+                                        QtGui.QIcon(
+                                            'anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valuem))))
+                                    self.it15.setIcon(
+                                        QtGui.QIcon(
+                                            'anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valuem))))
+                                    self.it16.setIcon(
+                                        QtGui.QIcon(
+                                            'anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valuem))))
+                                    self.it17.setIcon(
+                                        QtGui.QIcon(
+                                            'anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valuem))))
 
-                                self.TEXT.setText('anh/%s.png' % (label) + str(self.valuem))
+                                    self.TEXT.setText('anh/%s.png' % (label) + str(self.valuem))
+
 
                     self.displayImage(image, True)
                 else:
@@ -1956,6 +1973,14 @@ class Application:
                 self.cap.release()
                 root.update()
                 root.deiconify()
+            def cw1(self):
+                if self.valuea==1:
+                    self.NEXT_3c.setText("Chụp ảnh tự động")
+                    self.valuea = 2
+                else :
+                    self.NEXT_3c.setText("Chụp ảnh thủ công")
+                    self.valuea = 1
+
 
         window = video()
         window.setGeometry(0, 0, 1024, 570)
@@ -1973,4 +1998,5 @@ app = QApplication(sys.argv)
 root.geometry("1024x600+0+0")
 b = Application(root)
 root.mainloop()
+
 

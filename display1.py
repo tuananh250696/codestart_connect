@@ -81,33 +81,6 @@ class Application:
         connkey = sqlite3.connect("d.db")
         cursorkey = connkey.cursor()
 
-        # cursorkey.execute(
-        #     "CREATE TABLE IF NOT EXISTS `member` (mem_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, username TEXT, password TEXT, firstname TEXT, lastname TEXT)")
-        # self.leftkey = Frame(master,width=1000, height=550, bg='lightblue')
-        # self.leftkey.pack(side=LEFT)
-        # self.LABELKEY = Label( self.leftkey, text="WELL COME TO DEVICE BOSSCOM - INPUT KEY ACTIVE", font=('arial 20 bold'), fg='black',bg='lightblue')
-        # self.LABELKEY.place(x=150, y=60)
-        #
-        # self.LABELKEY1 = Label(self.leftkey, text="Mã ID THIẾT BỊ:",
-        #                       font=('arial 28 bold'), fg='black', bg='lightblue')
-        # self.LABELKEY1.place(x=120, y=110)
-        #
-        # self.name_key = Entry(self.leftkey, font=('arial 26 bold'), width=40)
-        # self.name_key.place(x=150, y=160)
-        #
-        # self.LABELKEY2 = Label(self.leftkey, text="ĐỊA CHỈ EMAIL:",
-        #                        font=('arial 28 bold'), fg='black', bg='lightblue')
-        # self.LABELKEY2.place(x=120, y=230)
-        # self.mail= Entry(self.leftkey, font=('arial 26 bold'), width=40)
-        # self.mail.place(x=150, y=280)
-        #
-        #
-        # self.LABELKEY3 = Label(self.leftkey, text="KEY ACTICE:",
-        #                        font=('arial 28 bold'), fg='black', bg='lightblue')
-        # self.LABELKEY3.place(x=120, y=380)
-        # self.name_keyK = Entry(self.leftkey, font=('arial 26 bold'), width=40)
-        # self.name_keyK.place(x=150, y=430)
-
         conn = sqlite3.connect("d.db")
         conn.row_factory = sqlite3.Row
 
@@ -131,6 +104,7 @@ class Application:
         b = m2[1:3]
 
         h22 = str(n) + str(num) + str(b) + str(n2)
+        
         USERNAME1 = h1
         USERNAME2 = str(row3["address"])
         USERNAME3= str(h22)

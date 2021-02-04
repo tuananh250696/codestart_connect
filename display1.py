@@ -53,14 +53,17 @@ product_id = []
 root = Tk()
 # root1 = Tk()
 # root2 = Tk()
+root.overrideredirect(True)
 root.title("COMPANY BOSSCCOM")
 newWindowaddf = Toplevel(root)
 newWindowaddf.title("add infomation")
 newWindowaddf.geometry("980x550+0+0")
+#
 
 addWindow = tk.Tk()
 addWindow.title("Set form print")
 addWindow.geometry("980x550+0+0")
+#
 
 labels_list = []
 var = IntVar()
@@ -70,6 +73,7 @@ c1 = StringVar()
 logic1 = 1
 USERNAME = StringVar()
 PASSWORD = StringVar()
+
 
 
 class Application:
@@ -116,10 +120,10 @@ class Application:
         cursorkey.execute("SELECT * FROM `member` WHERE `dt_id` = ? and `address` = ? and `key` = ?",
                           (USERNAME1, USERNAME2, USERNAME2))
         if cursorkey.fetchone() is not None:
-            #             root.overrideredirect(True)
             self.master = master
             self.logic1 = 1
             self.logic2 = 1
+            self.logic3 = 1
             # frame
             self.left = Frame(master, width=215, height=600, bg='white')
             self.left.pack(side=LEFT)
@@ -152,182 +156,6 @@ class Application:
                                    command=self.quit)
             self.bt_exit1.place(x=5, y=454)
 
-            self.rightw2 = Frame(addWindow, width=550, height=600, bg='lightblue')
-            self.rightw2.pack(side=RIGHT)
-            self.rightw3 = Frame(addWindow, width=600, height=600, bg='lightblue')
-            self.rightw3.pack(side=LEFT)
-
-            self.adr2 = Label(self.rightw3, text="Phòng khám:", font=('arial 16 bold'), fg='black', bg='lightblue')
-            self.adr2.place(x=10, y=10)
-            self.adr2_p = Entry(self.rightw3, font=('arial 20 bold'), width=26)
-            self.adr2_p.place(x=150, y=10)
-
-            self.doctor = Label(self.rightw3, text=" Bác sĩ :", font=('arial 16 bold'), fg='black', bg='lightblue')
-            self.doctor.place(x=10, y=85)
-
-            self.doctor_p = Entry(self.rightw3, font=('arial 20 bold'), width=26)
-            self.doctor_p.place(x=150, y=75)
-
-            self.n2 = Label(self.rightw3, text="Địa chỉ:", font=('arial 16 bold'), fg='black', bg='lightblue')
-            self.n2.place(x=10, y=155)
-
-            self.n2_p = Entry(self.rightw3, font=('arial 20 bold'), width=26)
-            self.n2_p.place(x=150, y=150)
-
-            self.add_dt = Button(self.rightw3, text="Cập nhật", width=15, height=3, font=('arial 18 bold'), bg='orange',
-                                 command=self.database_print)
-            self.add_dt.place(x=40, y=220)
-
-            self.add_dltd = Button(self.rightw3, text="Xóa", width=15, height=3, font=('arial 18 bold'), bg='orange',
-                                   command=self.Deletedata_print)  # command=self.quit_print2)
-            self.add_dltd.place(x=275, y=220)
-
-            self.addrn = Label(self.rightw3, text="Icon Addr:", font=('arial 18 bold'), fg='black', bg='lightblue')
-            self.addrn.place(x=10, y=360)
-
-            self.addrn_p = Entry(self.rightw3, font=('arial 22 bold'), width=25)
-            self.addrn_p.place(x=130, y=360)
-
-            self.add_dl = Button(self.rightw3, text="Thêm Icon", width=15, height=3, font=('arial 18 bold'),
-                                 bg='orange', command=self.openfile)
-            self.add_dl.place(x=35, y=410)
-            self.add_dl = Button(self.rightw3, text="Đóng", width=15, height=3, font=('arial 18 bold'),
-                                 bg='orange', command=self.quit11)
-            self.add_dl.place(x=260, y=410)
-
-            self.scrollbarx = Scrollbar(self.rightw2, orient=HORIZONTAL)
-            self.scrollbary = Scrollbar(self.rightw2, orient=VERTICAL)
-            self.tree1 = ttk.Treeview(self.rightw2, columns=("Id", "Phòng khám", "Bác sĩ", "Địa chỉ"),
-                                      selectmode="extended",
-                                      height=400, yscrollcommand=self.scrollbary.set,
-                                      xscrollcommand=self.scrollbarx.set)
-            self.scrollbary.config(command=self.tree1.yview)
-            self.scrollbary.pack(side=RIGHT, fill=Y)
-            self.scrollbarx.config(command=self.tree1.xview)
-            self.scrollbarx.pack(side=BOTTOM, fill=X)
-            self.tree1.column('#0', stretch=NO, minwidth=0, width=0)
-            self.tree1.column('#1', stretch=NO, minwidth=0, width=20)
-            self.tree1.column('#2', stretch=NO, minwidth=0, width=180)
-            self.tree1.column('#3', stretch=NO, minwidth=0, width=120)
-            self.tree1.column('#4', stretch=NO, minwidth=0, width=80)
-
-            self.tree1.pack()
-            self.tree1.heading('Id', text="Id", anchor=W)
-            self.tree1.heading('Phòng khám', text="Phòng khám", anchor=W)
-            self.tree1.heading('Bác sĩ', text="Bác sĩ", anchor=W)
-            self.tree1.heading('Địa chỉ', text="Địa chỉ", anchor=W)
-            self.tree1.pack()
-
-            conn = sqlite3.connect("db_member.db")
-            cursor = conn.cursor()
-            cursor.execute("SELECT * FROM `print_dt`")
-            fetch = cursor.fetchall()
-            for data in fetch:
-                self.tree1.insert('', 'end', values=(data))
-            cursor.close()
-            conn.close()
-
-            self.rightw222 = Frame(newWindowaddf, width=205, height=500, bg='lightblue')
-            self.rightw222.pack(side=RIGHT)
-            self.rightw444 = Frame(newWindowaddf, width=205, height=500, bg='lightyellow')
-            self.rightw444.pack(side=RIGHT)
-            self.rightw333 = Frame(newWindowaddf, width=540, height=500, bg='lightblue')
-            self.rightw333.pack(side=LEFT)
-
-            self.n3 = Label(self.rightw333, text="Danh Mục Chẩn Đoán:", font=('arial 14 bold'), fg='black',
-                            bg='lightblue')
-            self.n3.place(x=10, y=10)
-
-            self.ad_if2 = Entry(self.rightw333, font=('arial 28 bold'), width=16)
-            self.ad_if2.place(x=188, y=39)
-
-            # self.n4 = Label(self.rightw3, text="Danh Mục:", font=('arial 14 bold'), fg='black', bg='lightblue')
-            # self.n4.place(x=10, y=90)
-
-            self.droplist1 = OptionMenu(self.rightw333, c1, 'TAI', 'MŨI', 'HỌNG')
-            self.droplist1.pack()
-
-            self.menu = self.droplist1.nametowidget(self.droplist1.menuname)
-            self.menu.configure(font=('arial 28 bold'))
-            c1.set('HỌNG')
-
-            self.droplist1.config(width=9, height=1, font=('arial 20 bold'))
-            self.droplist1.place(x=5, y=40)
-
-            self.add_ifmt = Button(self.rightw333, text="Cập Nhật", width=12, height=2, font=('arial 18 bold'),
-                                   bg='orange',
-                                   command=self.database_print111)
-            self.add_ifmt.place(x=5, y=90)
-
-            self.n4 = Label(self.rightw333, text="Phương Pháp Điều Trị:", font=('arial 14 bold'), fg='black',
-                            bg='lightblue')
-            self.n4.place(x=10, y=185)
-
-            self.ad_j2 = Entry(self.rightw333, font=('arial 28 bold'), width=24)
-            self.ad_j2.place(x=10, y=215)
-
-            self.add_ifmj = Button(self.rightw333, text="Cập nhật", width=12, height=2, font=('arial 18 bold'),
-                                   bg='orange',
-                                   command=self.database_printnn1)
-            self.add_ifmj.place(x=5, y=270)
-
-            self.add_dltifmtjj = Button(self.rightw333, text="Xóa", width=16, height=2, font=('arial 18 bold'),
-                                        bg='orange', command=self.Deletedata_NewWindow)
-            self.add_dltifmtjj.place(x=25, y=390)
-            self.add_dltifmtjj = Button(self.rightw333, text="Đóng", width=16, height=2, font=('arial 18 bold'),
-                                        bg='orange', command=self.quit22)
-            self.add_dltifmtjj.place(x=260, y=390)
-
-            # self.add_dltd = Button(self.rightw3, text="Đóng", width=14, height=2, font=('arial 20 bold'),
-            #                        bg='orange', command=self.quit_print1)
-            # self.add_dltd.place(x=5, y=400)
-            scrollbary = Scrollbar(self.rightw222, orient=VERTICAL)
-            scrollbarx = Scrollbar(self.rightw222, orient=HORIZONTAL)
-            self.tree2 = ttk.Treeview(self.rightw222, columns=("Danh Mục", "Chẩn Đoán"),
-                                      selectmode="extended", height=250, yscrollcommand=scrollbary.set,
-                                      xscrollcommand=scrollbarx.set)
-            scrollbary.config(command=self.tree2.yview)
-            scrollbary.pack(side=RIGHT, fill=Y)
-            scrollbarx.config(command=self.tree2.xview)
-            scrollbarx.pack(side=BOTTOM, fill=X)
-            self.tree2.heading('Danh Mục', text="Danh Mục", anchor=W)
-            self.tree2.heading('Chẩn Đoán', text="Chẩn Đoán", anchor=W)
-            self.tree2.column('#0', stretch=NO, minwidth=0, width=0)
-            self.tree2.column('#1', stretch=NO, minwidth=0, width=200)
-            self.tree2.column('#2', stretch=NO, minwidth=0, width=0)
-            self.tree2.pack()
-
-            scrollbary = Scrollbar(self.rightw444, orient=VERTICAL)
-            scrollbarx = Scrollbar(self.rightw444, orient=HORIZONTAL)
-            self.tree4 = ttk.Treeview(self.rightw444, columns=("Danh Mục Chẩn Đoán", "Chỉ Định"),
-                                      selectmode="extended", height=250, yscrollcommand=scrollbary.set,
-                                      xscrollcommand=scrollbarx.set)
-            scrollbary.config(command=self.tree4.yview)
-            scrollbary.pack(side=RIGHT, fill=Y)
-            scrollbarx.config(command=self.tree2.xview)
-            scrollbarx.pack(side=BOTTOM, fill=X)
-            self.tree4.heading('Danh Mục Chẩn Đoán', text="Danh Mục Chẩn Đoán", anchor=W)
-            self.tree4.heading('Chỉ Định', text="Chỉ Định", anchor=W)
-            self.tree4.column('#0', stretch=NO, minwidth=0, width=0)
-            self.tree4.column('#1', stretch=NO, minwidth=0, width=0)
-            self.tree4.column('#2', stretch=NO, minwidth=0, width=195)
-            self.tree4.pack()
-
-            conn = sqlite3.connect("db_member.db")
-            cursor = conn.cursor()
-            cursor1 = conn.cursor()
-            cursor.execute("SELECT * FROM `print_dt22`")
-            fetch = cursor.fetchall()
-            cursor1.execute("SELECT * FROM `print_jb22`")
-            fetch1 = cursor1.fetchall()
-            for data in fetch:
-                self.tree2.insert('', 'end', values=(data))
-            for data1 in fetch1:
-                self.tree4.insert('', 'end', values=(data1))
-            cursor.close()
-            conn.close()
-            conn = sqlite3.connect("db_member.db")
-            cursor = conn.cursor()
             addWindow.withdraw()
             newWindowaddf.withdraw()
         else:
@@ -655,21 +483,105 @@ class Application:
         conn = sqlite3.connect("db_member.db")
         cursor = conn.cursor()
         if namepk == '' or name_dt == '' or address_pk == '':
-            tkinter.messagebox.showinfo("Error", "Điền đầy đủ thông tin.")
+            # self.logic2 = 2
+            # tkinter.messagebox.showinfo("Error", "Điền đầy đủ thông tin.")
+            self.addrn = Label(self.rightw3, text="Điền đầy đủ thông tin! ", font=('arial 18 bold'), fg='black', bg='white')
+            self.addrn.place(x=200, y=520)
         else:
+
             cursor.execute("DELETE FROM print_dt WHERE id=1")
             cursor.execute('CREATE TABLE IF NOT EXISTS print_dt (name_pk TEXT,dt_name TEXT,address TEXT)')
             cursor.execute('INSERT INTO print_dt (name_pk,dt_name,address) VALUES(?,?,?)',
                            (namepk, name_dt, address_pk))
             # tkinter.messagebox.showinfo("Success", "Đã thêm thông tin")
+
             conn.commit()
             cursor.close()
-            self.add_to_bn()
             self.adr2_p.delete(0, END)
             self.doctor_p.delete(0, END)
             self.n2_p.delete(0, END)
 
+            self.rightw2.destroy()
+            self.rightw3.destroy()
+            self.rightw2 = Frame(addWindow, width=550, height=600, bg='lightblue')
+            self.rightw2.pack(side=RIGHT)
+            self.rightw3 = Frame(addWindow, width=600, height=600, bg='lightblue')
+            self.rightw3.pack(side=LEFT)
 
+            self.adr2 = Label(self.rightw3, text="Phòng khám:", font=('arial 16 bold'), fg='black', bg='lightblue')
+            self.adr2.place(x=10, y=10)
+            self.adr2_p = Entry(self.rightw3, font=('arial 20 bold'), width=26)
+            self.adr2_p.place(x=150, y=10)
+
+            self.doctor = Label(self.rightw3, text=" Bác sĩ :", font=('arial 16 bold'), fg='black', bg='lightblue')
+            self.doctor.place(x=10, y=85)
+
+            self.doctor_p = Entry(self.rightw3, font=('arial 20 bold'), width=26)
+            self.doctor_p.place(x=150, y=75)
+
+            self.n2 = Label(self.rightw3, text="Địa chỉ:", font=('arial 16 bold'), fg='black', bg='lightblue')
+            self.n2.place(x=10, y=155)
+
+            self.n2_p = Entry(self.rightw3, font=('arial 20 bold'), width=26)
+            self.n2_p.place(x=150, y=150)
+
+            self.add_dt = Button(self.rightw3, text="Cập nhật", width=15, height=3, font=('arial 18 bold'),
+                                 bg='orange',
+                                 command=self.database_print)
+            self.add_dt.place(x=40, y=220)
+
+            self.add_dltd = Button(self.rightw3, text="Xóa", width=15, height=3, font=('arial 18 bold'),
+                                   bg='orange',
+                                   command=self.Deletedata_print)  # command=self.quit_print2)
+            self.add_dltd.place(x=275, y=220)
+
+            self.addrn = Label(self.rightw3, text="Icon Addr:", font=('arial 18 bold'), fg='black', bg='lightblue')
+            self.addrn.place(x=10, y=360)
+
+            self.addrn_p = Entry(self.rightw3, font=('arial 22 bold'), width=25)
+            self.addrn_p.place(x=130, y=360)
+
+            self.add_dl = Button(self.rightw3, text="Thêm Icon", width=15, height=3, font=('arial 18 bold'),
+                                 bg='orange', command=self.openfile)
+            self.add_dl.place(x=35, y=410)
+            self.add_dl = Button(self.rightw3, text="Đóng", width=15, height=3, font=('arial 18 bold'),
+                                 bg='orange', command=self.quit11)
+            self.add_dl.place(x=260, y=410)
+            self.addrn = Label(self.rightw3, text="Đã thêm đủ thông tin! ", font=('arial 18 bold'), fg='black',
+                               bg='white')
+            self.addrn.place(x=200, y=520)
+
+            self.scrollbarx = Scrollbar(self.rightw2, orient=HORIZONTAL)
+            self.scrollbary = Scrollbar(self.rightw2, orient=VERTICAL)
+            self.tree1 = ttk.Treeview(self.rightw2, columns=("Id", "Phòng khám", "Bác sĩ", "Địa chỉ"),
+                                      selectmode="extended",
+                                      height=400, yscrollcommand=self.scrollbary.set,
+                                      xscrollcommand=self.scrollbarx.set)
+            self.scrollbary.config(command=self.tree1.yview)
+            self.scrollbary.pack(side=RIGHT, fill=Y)
+            self.scrollbarx.config(command=self.tree1.xview)
+            self.scrollbarx.pack(side=BOTTOM, fill=X)
+            self.tree1.column('#0', stretch=NO, minwidth=0, width=0)
+            self.tree1.column('#1', stretch=NO, minwidth=0, width=20)
+            self.tree1.column('#2', stretch=NO, minwidth=0, width=180)
+            self.tree1.column('#3', stretch=NO, minwidth=0, width=120)
+            self.tree1.column('#4', stretch=NO, minwidth=0, width=80)
+
+            self.tree1.pack()
+            self.tree1.heading('Id', text="Id", anchor=W)
+            self.tree1.heading('Phòng khám', text="Phòng khám", anchor=W)
+            self.tree1.heading('Bác sĩ', text="Bác sĩ", anchor=W)
+            self.tree1.heading('Địa chỉ', text="Địa chỉ", anchor=W)
+            self.tree1.pack()
+
+            conn = sqlite3.connect("db_member.db")
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM `print_dt`")
+            fetch = cursor.fetchall()
+            for data in fetch:
+                self.tree1.insert('', 'end', values=(data))
+            cursor.close()
+            conn.close()
 
 
 
@@ -702,7 +614,10 @@ class Application:
         conn = sqlite3.connect("db_member.db")
         cursor = conn.cursor()
         if nameadd22 == '' or name_dt22 == '':
-            tkinter.messagebox.showinfo("Error", "điền đầy đủ thông tin!.")
+
+            self.addrn = Label(self.rightw333, text="Điền đầy đủ thông tin! ", font=('arial 18 bold'), fg='black',
+                               bg='white')
+            self.addrn.place(x=70, y=460)
 
         else:
             cursor.execute('CREATE TABLE IF NOT EXISTS print_dt22 (name_pk22 TEXT,dt_name22 TEXT)')
@@ -713,8 +628,117 @@ class Application:
             cursor.close()
 
             self.ad_if2.delete(0, END)
-            addWindow.withdraw()
-            self.createNewWindow()
+
+            self.rightw222.destroy()
+            self.rightw444.destroy()
+            self.rightw333.destroy()
+
+            self.rightw222 = Frame(newWindowaddf, width=205, height=500, bg='lightblue')
+            self.rightw222.pack(side=RIGHT)
+            self.rightw444 = Frame(newWindowaddf, width=205, height=500, bg='lightyellow')
+            self.rightw444.pack(side=RIGHT)
+            self.rightw333 = Frame(newWindowaddf, width=540, height=500, bg='lightblue')
+            self.rightw333.pack(side=LEFT)
+
+            self.n3 = Label(self.rightw333, text="Danh Mục Chẩn Đoán:", font=('arial 14 bold'), fg='black',
+                            bg='lightblue')
+            self.n3.place(x=10, y=10)
+
+            self.ad_if2 = Entry(self.rightw333, font=('arial 28 bold'), width=16)
+            self.ad_if2.place(x=188, y=39)
+
+            # self.n4 = Label(self.rightw3, text="Danh Mục:", font=('arial 14 bold'), fg='black', bg='lightblue')
+            # self.n4.place(x=10, y=90)
+
+            self.droplist1 = OptionMenu(self.rightw333, c1, 'TAI', 'MŨI', 'HỌNG')
+            self.droplist1.pack()
+
+            self.menu = self.droplist1.nametowidget(self.droplist1.menuname)
+            self.menu.configure(font=('arial 28 bold'))
+            c1.set('HỌNG')
+
+            self.droplist1.config(width=9, height=1, font=('arial 20 bold'))
+            self.droplist1.place(x=5, y=40)
+
+            self.add_ifmt = Button(self.rightw333, text="Cập Nhật", width=12, height=2, font=('arial 18 bold'),
+                                   bg='orange',
+                                   command=self.database_print111)
+            self.add_ifmt.place(x=5, y=90)
+
+            self.n4 = Label(self.rightw333, text="Phương Pháp Điều Trị:", font=('arial 14 bold'), fg='black',
+                            bg='lightblue')
+            self.n4.place(x=10, y=185)
+
+            self.ad_j2 = Entry(self.rightw333, font=('arial 28 bold'), width=24)
+            self.ad_j2.place(x=10, y=215)
+
+            self.add_ifmj = Button(self.rightw333, text="Cập nhật", width=12, height=2, font=('arial 18 bold'),
+                                   bg='orange',
+                                   command=self.database_printnn1)
+            self.add_ifmj.place(x=5, y=270)
+
+            self.add_dltifmtjj = Button(self.rightw333, text="Xóa", width=16, height=2, font=('arial 18 bold'),
+                                        bg='orange', command=self.Deletedata_NewWindow)
+            self.add_dltifmtjj.place(x=25, y=375)
+            self.add_dltifmtjj = Button(self.rightw333, text="Đóng", width=16, height=2, font=('arial 18 bold'),
+                                        bg='orange', command=self.quit22)
+            self.add_dltifmtjj.place(x=260, y=375)
+            self.addrn = Label(self.rightw333, text="Đã thêm đủ thông tin! ", font=('arial 18 bold'), fg='black',
+                               bg='white')
+            self.addrn.place(x=70, y=460)
+
+            # self.add_dltd = Button(self.rightw3, text="Đóng", width=14, height=2, font=('arial 20 bold'),
+            #                        bg='orange', command=self.quit_print1)
+            # self.add_dltd.place(x=5, y=400)
+            scrollbary = Scrollbar(self.rightw222, orient=VERTICAL)
+            scrollbarx = Scrollbar(self.rightw222, orient=HORIZONTAL)
+            self.tree2 = ttk.Treeview(self.rightw222, columns=("Danh Mục", "Chẩn Đoán"),
+                                      selectmode="extended", height=250, yscrollcommand=scrollbary.set,
+                                      xscrollcommand=scrollbarx.set)
+            scrollbary.config(command=self.tree2.yview)
+            scrollbary.pack(side=RIGHT, fill=Y)
+            scrollbarx.config(command=self.tree2.xview)
+            scrollbarx.pack(side=BOTTOM, fill=X)
+            self.tree2.heading('Danh Mục', text="Danh Mục", anchor=W)
+            self.tree2.heading('Chẩn Đoán', text="Chẩn Đoán", anchor=W)
+            self.tree2.column('#0', stretch=NO, minwidth=0, width=0)
+            self.tree2.column('#1', stretch=NO, minwidth=0, width=200)
+            self.tree2.column('#2', stretch=NO, minwidth=0, width=0)
+            self.tree2.pack()
+
+            scrollbary = Scrollbar(self.rightw444, orient=VERTICAL)
+            scrollbarx = Scrollbar(self.rightw444, orient=HORIZONTAL)
+            self.tree4 = ttk.Treeview(self.rightw444, columns=("Danh Mục Chẩn Đoán", "Chỉ Định"),
+                                      selectmode="extended", height=250, yscrollcommand=scrollbary.set,
+                                      xscrollcommand=scrollbarx.set)
+            scrollbary.config(command=self.tree4.yview)
+            scrollbary.pack(side=RIGHT, fill=Y)
+            scrollbarx.config(command=self.tree2.xview)
+            scrollbarx.pack(side=BOTTOM, fill=X)
+            self.tree4.heading('Danh Mục Chẩn Đoán', text="Danh Mục Chẩn Đoán", anchor=W)
+            self.tree4.heading('Chỉ Định', text="Chỉ Định", anchor=W)
+            self.tree4.column('#0', stretch=NO, minwidth=0, width=0)
+            self.tree4.column('#1', stretch=NO, minwidth=0, width=0)
+            self.tree4.column('#2', stretch=NO, minwidth=0, width=195)
+            self.tree4.pack()
+
+            conn = sqlite3.connect("db_member.db")
+            cursor = conn.cursor()
+            cursor1 = conn.cursor()
+            cursor.execute("SELECT * FROM `print_dt22`")
+            fetch = cursor.fetchall()
+            cursor1.execute("SELECT * FROM `print_jb22`")
+            fetch1 = cursor1.fetchall()
+            for data in fetch:
+                self.tree2.insert('', 'end', values=(data))
+            for data1 in fetch1:
+                self.tree4.insert('', 'end', values=(data1))
+            cursor.close()
+            conn.close()
+            conn = sqlite3.connect("db_member.db")
+            cursor = conn.cursor()
+            # addWindow.withdraw()
+            # self.createNewWindow()
 
 
     def database_printnn1(self):
@@ -723,7 +747,9 @@ class Application:
         conn = sqlite3.connect("db_member.db")
         cursor = conn.cursor()
         if name_dtn222 == '':
-            tkinter.messagebox.showinfo("Error", "điền đầy đủ thông tin!.")
+            self.addrn = Label(self.rightw333, text="Điền đầy đủ thông tin! ", font=('arial 18 bold'), fg='black',
+                               bg='white')
+            self.addrn.place(x=70, y=460)
 
         else:
             # cursor.execute('CREATE TABLE IF NOT EXISTS print_jb22 (name_pjb22 TEXT)')
@@ -731,13 +757,124 @@ class Application:
             cursor.execute('CREATE TABLE IF NOT EXISTS print_jb22 (name_j22 TEXT,dt_namej TEXT)')
             cursor.execute('INSERT INTO print_jb22 (name_j22,dt_namej) VALUES(?,?)', (name_dtn222, name_dtn222))
 
-            # tkinter.messagebox.showinfo("Success", "Đã thêm thông tin")
+
+
             conn.commit()
             cursor.close()
 
             self.ad_j2.delete(0, END)
-            addWindow.withdraw()
-            self.createNewWindow()
+
+            self.rightw222.destroy()
+            self.rightw444.destroy()
+            self.rightw333.destroy()
+
+            self.rightw222 = Frame(newWindowaddf, width=205, height=500, bg='lightblue')
+            self.rightw222.pack(side=RIGHT)
+            self.rightw444 = Frame(newWindowaddf, width=205, height=500, bg='lightyellow')
+            self.rightw444.pack(side=RIGHT)
+            self.rightw333 = Frame(newWindowaddf, width=540, height=500, bg='lightblue')
+            self.rightw333.pack(side=LEFT)
+
+
+            self.n3 = Label(self.rightw333, text="Danh Mục Chẩn Đoán:", font=('arial 14 bold'), fg='black',
+                            bg='lightblue')
+            self.n3.place(x=10, y=10)
+
+            self.ad_if2 = Entry(self.rightw333, font=('arial 28 bold'), width=16)
+            self.ad_if2.place(x=188, y=39)
+
+            # self.n4 = Label(self.rightw3, text="Danh Mục:", font=('arial 14 bold'), fg='black', bg='lightblue')
+            # self.n4.place(x=10, y=90)
+
+            self.droplist1 = OptionMenu(self.rightw333, c1, 'TAI', 'MŨI', 'HỌNG')
+            self.droplist1.pack()
+
+            self.menu = self.droplist1.nametowidget(self.droplist1.menuname)
+            self.menu.configure(font=('arial 28 bold'))
+            c1.set('HỌNG')
+
+            self.droplist1.config(width=9, height=1, font=('arial 20 bold'))
+            self.droplist1.place(x=5, y=40)
+
+            self.add_ifmt = Button(self.rightw333, text="Cập Nhật", width=12, height=2, font=('arial 18 bold'),
+                                   bg='orange',
+                                   command=self.database_print111)
+            self.add_ifmt.place(x=5, y=90)
+
+            self.n4 = Label(self.rightw333, text="Phương Pháp Điều Trị:", font=('arial 14 bold'), fg='black',
+                            bg='lightblue')
+            self.n4.place(x=10, y=185)
+
+            self.ad_j2 = Entry(self.rightw333, font=('arial 28 bold'), width=24)
+            self.ad_j2.place(x=10, y=215)
+
+            self.add_ifmj = Button(self.rightw333, text="Cập nhật", width=12, height=2, font=('arial 18 bold'),
+                                   bg='orange',
+                                   command=self.database_printnn1)
+            self.add_ifmj.place(x=5, y=270)
+
+            self.add_dltifmtjj = Button(self.rightw333, text="Xóa", width=16, height=2, font=('arial 18 bold'),
+                                        bg='orange', command=self.Deletedata_NewWindow)
+            self.add_dltifmtjj.place(x=25, y=375)
+            self.add_dltifmtjj = Button(self.rightw333, text="Đóng", width=16, height=2, font=('arial 18 bold'),
+                                        bg='orange', command=self.quit22)
+            self.add_dltifmtjj.place(x=260, y=375)
+            self.addrn = Label(self.rightw333, text="Đã thêm đủ thông tin! ", font=('arial 18 bold'), fg='black',
+                               bg='white')
+            self.addrn.place(x=70, y=460)
+
+            # self.add_dltd = Button(self.rightw3, text="Đóng", width=14, height=2, font=('arial 20 bold'),
+            #                        bg='orange', command=self.quit_print1)
+            # self.add_dltd.place(x=5, y=400)
+            scrollbary = Scrollbar(self.rightw222, orient=VERTICAL)
+            scrollbarx = Scrollbar(self.rightw222, orient=HORIZONTAL)
+            self.tree2 = ttk.Treeview(self.rightw222, columns=("Danh Mục", "Chẩn Đoán"),
+                                      selectmode="extended", height=250, yscrollcommand=scrollbary.set,
+                                      xscrollcommand=scrollbarx.set)
+            scrollbary.config(command=self.tree2.yview)
+            scrollbary.pack(side=RIGHT, fill=Y)
+            scrollbarx.config(command=self.tree2.xview)
+            scrollbarx.pack(side=BOTTOM, fill=X)
+            self.tree2.heading('Danh Mục', text="Danh Mục", anchor=W)
+            self.tree2.heading('Chẩn Đoán', text="Chẩn Đoán", anchor=W)
+            self.tree2.column('#0', stretch=NO, minwidth=0, width=0)
+            self.tree2.column('#1', stretch=NO, minwidth=0, width=200)
+            self.tree2.column('#2', stretch=NO, minwidth=0, width=0)
+            self.tree2.pack()
+
+            scrollbary = Scrollbar(self.rightw444, orient=VERTICAL)
+            scrollbarx = Scrollbar(self.rightw444, orient=HORIZONTAL)
+            self.tree4 = ttk.Treeview(self.rightw444, columns=("Danh Mục Chẩn Đoán", "Chỉ Định"),
+                                      selectmode="extended", height=250, yscrollcommand=scrollbary.set,
+                                      xscrollcommand=scrollbarx.set)
+            scrollbary.config(command=self.tree4.yview)
+            scrollbary.pack(side=RIGHT, fill=Y)
+            scrollbarx.config(command=self.tree2.xview)
+            scrollbarx.pack(side=BOTTOM, fill=X)
+            self.tree4.heading('Danh Mục Chẩn Đoán', text="Danh Mục Chẩn Đoán", anchor=W)
+            self.tree4.heading('Chỉ Định', text="Chỉ Định", anchor=W)
+            self.tree4.column('#0', stretch=NO, minwidth=0, width=0)
+            self.tree4.column('#1', stretch=NO, minwidth=0, width=0)
+            self.tree4.column('#2', stretch=NO, minwidth=0, width=195)
+            self.tree4.pack()
+
+            conn = sqlite3.connect("db_member.db")
+            cursor = conn.cursor()
+            cursor1 = conn.cursor()
+            cursor.execute("SELECT * FROM `print_dt22`")
+            fetch = cursor.fetchall()
+            cursor1.execute("SELECT * FROM `print_jb22`")
+            fetch1 = cursor1.fetchall()
+            for data in fetch:
+                self.tree2.insert('', 'end', values=(data))
+            for data1 in fetch1:
+                self.tree4.insert('', 'end', values=(data1))
+            cursor.close()
+            conn.close()
+            conn = sqlite3.connect("db_member.db")
+            cursor = conn.cursor()
+            # addWindow.withdraw()
+            # self.createNewWindow()
 
 
     def openfile(self):  # open the file\
@@ -749,26 +886,204 @@ class Application:
         conn = sqlite3.connect("db_member.db")
         cursor = conn.cursor()
         if address_addrn == '':
-            tkinter.messagebox.showinfo("Error", "Điền đầy đủ thông tin.")
+            self.addrn = Label(self.rightw3, text="Điền đầy đủ thông tin! ", font=('arial 18 bold'), fg='blue',
+                               bg='white')
+            self.addrn.place(x=200, y=520)
         else:
             cursor.execute("DELETE FROM print_dtadd WHERE addressadd=1")
             cursor.execute('CREATE TABLE IF NOT EXISTS print_dtadd (name_pkadd TEXT,dt_nameadd TEXT)')
             cursor.execute('INSERT INTO print_dtadd (name_pkadd,dt_nameadd) VALUES(?,?)',
                            (address_addrn, address_addrn))
-            tkinter.messagebox.showinfo("Success", "Đã thêm thông tin")
+            self.addrn = Label(self.rightw3, text="Đã thêm biểu tượng   ! ", font=('arial 18 bold'), fg='blue',
+                               bg='white')
+            self.addrn.place(x=200, y=520)
             conn.commit()
             cursor.close()
 
     def createNewWindow(self, *args, **kwargs):
+        root.withdraw()
         newWindowaddf.update()
         newWindowaddf.deiconify()
-        # root.withdraw()
+        self.rightw222 = Frame(newWindowaddf, width=205, height=500, bg='lightblue')
+        self.rightw222.pack(side=RIGHT)
+        self.rightw444 = Frame(newWindowaddf, width=205, height=500, bg='lightyellow')
+        self.rightw444.pack(side=RIGHT)
+        self.rightw333 = Frame(newWindowaddf, width=540, height=500, bg='lightblue')
+        self.rightw333.pack(side=LEFT)
+
+        self.n3 = Label(self.rightw333, text="Danh Mục Chẩn Đoán:", font=('arial 14 bold'), fg='black', bg='lightblue')
+        self.n3.place(x=10, y=10)
+
+        self.ad_if2 = Entry(self.rightw333, font=('arial 28 bold'), width=16)
+        self.ad_if2.place(x=188, y=39)
+
+        # self.n4 = Label(self.rightw3, text="Danh Mục:", font=('arial 14 bold'), fg='black', bg='lightblue')
+        # self.n4.place(x=10, y=90)
+
+        self.droplist1 = OptionMenu(self.rightw333, c1, 'TAI', 'MŨI', 'HỌNG')
+        self.droplist1.pack()
+
+        self.menu = self.droplist1.nametowidget(self.droplist1.menuname)
+        self.menu.configure(font=('arial 28 bold'))
+        c1.set('HỌNG')
+
+        self.droplist1.config(width=9, height=1, font=('arial 20 bold'))
+        self.droplist1.place(x=5, y=40)
+
+        self.add_ifmt = Button(self.rightw333, text="Cập Nhật", width=12, height=2, font=('arial 18 bold'), bg='orange',
+                               command=self.database_print111)
+        self.add_ifmt.place(x=5, y=90)
+
+        self.n4 = Label(self.rightw333, text="Phương Pháp Điều Trị:", font=('arial 14 bold'), fg='black',
+                        bg='lightblue')
+        self.n4.place(x=10, y=185)
+
+        self.ad_j2 = Entry(self.rightw333, font=('arial 28 bold'), width=24)
+        self.ad_j2.place(x=10, y=215)
+
+        self.add_ifmj = Button(self.rightw333, text="Cập nhật", width=12, height=2, font=('arial 18 bold'), bg='orange',
+                               command=self.database_printnn1)
+        self.add_ifmj.place(x=5, y=270)
+
+        self.add_dltifmtjj = Button(self.rightw333, text="Xóa", width=16, height=2, font=('arial 18 bold'),
+                                    bg='orange', command=self.Deletedata_NewWindow)
+        self.add_dltifmtjj.place(x=25, y=375)
+        self.add_dltifmtjj = Button(self.rightw333, text="Đóng", width=16, height=2, font=('arial 18 bold'),
+                                    bg='orange', command=self.quit22)
+        self.add_dltifmtjj.place(x=260, y=375)
+
+        # self.add_dltd = Button(self.rightw3, text="Đóng", width=14, height=2, font=('arial 20 bold'),
+        #                        bg='orange', command=self.quit_print1)
+        # self.add_dltd.place(x=5, y=400)
+        scrollbary = Scrollbar(self.rightw222, orient=VERTICAL)
+        scrollbarx = Scrollbar(self.rightw222, orient=HORIZONTAL)
+        self.tree2 = ttk.Treeview(self.rightw222, columns=("Danh Mục", "Chẩn Đoán"),
+                                  selectmode="extended", height=250, yscrollcommand=scrollbary.set,
+                                  xscrollcommand=scrollbarx.set)
+        scrollbary.config(command=self.tree2.yview)
+        scrollbary.pack(side=RIGHT, fill=Y)
+        scrollbarx.config(command=self.tree2.xview)
+        scrollbarx.pack(side=BOTTOM, fill=X)
+        self.tree2.heading('Danh Mục', text="Danh Mục", anchor=W)
+        self.tree2.heading('Chẩn Đoán', text="Chẩn Đoán", anchor=W)
+        self.tree2.column('#0', stretch=NO, minwidth=0, width=0)
+        self.tree2.column('#1', stretch=NO, minwidth=0, width=200)
+        self.tree2.column('#2', stretch=NO, minwidth=0, width=0)
+        self.tree2.pack()
+
+        scrollbary = Scrollbar(self.rightw444, orient=VERTICAL)
+        scrollbarx = Scrollbar(self.rightw444, orient=HORIZONTAL)
+        self.tree4 = ttk.Treeview(self.rightw444, columns=("Danh Mục Chẩn Đoán", "Chỉ Định"),
+                                  selectmode="extended", height=250, yscrollcommand=scrollbary.set,
+                                  xscrollcommand=scrollbarx.set)
+        scrollbary.config(command=self.tree4.yview)
+        scrollbary.pack(side=RIGHT, fill=Y)
+        scrollbarx.config(command=self.tree2.xview)
+        scrollbarx.pack(side=BOTTOM, fill=X)
+        self.tree4.heading('Danh Mục Chẩn Đoán', text="Danh Mục Chẩn Đoán", anchor=W)
+        self.tree4.heading('Chỉ Định', text="Chỉ Định", anchor=W)
+        self.tree4.column('#0', stretch=NO, minwidth=0, width=0)
+        self.tree4.column('#1', stretch=NO, minwidth=0, width=0)
+        self.tree4.column('#2', stretch=NO, minwidth=0, width=195)
+        self.tree4.pack()
+
+        conn = sqlite3.connect("db_member.db")
+        cursor = conn.cursor()
+        cursor1 = conn.cursor()
+        cursor.execute("SELECT * FROM `print_dt22`")
+        fetch = cursor.fetchall()
+        cursor1.execute("SELECT * FROM `print_jb22`")
+        fetch1 = cursor1.fetchall()
+        for data in fetch:
+            self.tree2.insert('', 'end', values=(data))
+        for data1 in fetch1:
+            self.tree4.insert('', 'end', values=(data1))
+        cursor.close()
+        conn.close()
+        conn = sqlite3.connect("db_member.db")
+        cursor = conn.cursor()
+
+
+        # # root.withdraw()
 
     def add_to_bn(self, *args, **kwargs):
+        root.withdraw()
         addWindow.update()
         addWindow.deiconify()
-        # root.withdraw()
+        self.rightw2 = Frame(addWindow, width=550, height=600, bg='lightblue')
+        self.rightw2.pack(side=RIGHT)
+        self.rightw3 = Frame(addWindow, width=600, height=600, bg='lightblue')
+        self.rightw3.pack(side=LEFT)
 
+        self.adr2 = Label(self.rightw3, text="Phòng khám:", font=('arial 16 bold'), fg='black', bg='lightblue')
+        self.adr2.place(x=10, y=10)
+        self.adr2_p = Entry(self.rightw3, font=('arial 20 bold'), width=26)
+        self.adr2_p.place(x=150, y=10)
+
+        self.doctor = Label(self.rightw3, text=" Bác sĩ :", font=('arial 16 bold'), fg='black', bg='lightblue')
+        self.doctor.place(x=10, y=85)
+
+        self.doctor_p = Entry(self.rightw3, font=('arial 20 bold'), width=26)
+        self.doctor_p.place(x=150, y=75)
+
+        self.n2 = Label(self.rightw3, text="Địa chỉ:", font=('arial 16 bold'), fg='black', bg='lightblue')
+        self.n2.place(x=10, y=155)
+
+        self.n2_p = Entry(self.rightw3, font=('arial 20 bold'), width=26)
+        self.n2_p.place(x=150, y=150)
+
+        self.add_dt = Button(self.rightw3, text="Cập nhật", width=15, height=3, font=('arial 18 bold'), bg='orange',
+                             command=self.database_print)
+        self.add_dt.place(x=40, y=220)
+
+        self.add_dltd = Button(self.rightw3, text="Xóa", width=15, height=3, font=('arial 18 bold'), bg='orange',
+                               command=self.Deletedata_print)  # command=self.quit_print2)
+        self.add_dltd.place(x=275, y=220)
+
+        self.addrn = Label(self.rightw3, text="Icon Addr:", font=('arial 18 bold'), fg='black', bg='lightblue')
+        self.addrn.place(x=10, y=360)
+
+        self.addrn_p = Entry(self.rightw3, font=('arial 22 bold'), width=25)
+        self.addrn_p.place(x=130, y=360)
+
+        self.add_dl = Button(self.rightw3, text="Thêm Icon", width=15, height=3, font=('arial 18 bold'),
+                             bg='orange', command=self.openfile)
+        self.add_dl.place(x=35, y=410)
+        self.add_dl = Button(self.rightw3, text="Đóng", width=15, height=3, font=('arial 18 bold'),
+                             bg='orange', command=self.quit11)
+        self.add_dl.place(x=260, y=410)
+
+        self.scrollbarx = Scrollbar(self.rightw2, orient=HORIZONTAL)
+        self.scrollbary = Scrollbar(self.rightw2, orient=VERTICAL)
+        self.tree1 = ttk.Treeview(self.rightw2, columns=("Id", "Phòng khám", "Bác sĩ", "Địa chỉ"),
+                                  selectmode="extended",
+                                  height=400, yscrollcommand=self.scrollbary.set,
+                                  xscrollcommand=self.scrollbarx.set)
+        self.scrollbary.config(command=self.tree1.yview)
+        self.scrollbary.pack(side=RIGHT, fill=Y)
+        self.scrollbarx.config(command=self.tree1.xview)
+        self.scrollbarx.pack(side=BOTTOM, fill=X)
+        self.tree1.column('#0', stretch=NO, minwidth=0, width=0)
+        self.tree1.column('#1', stretch=NO, minwidth=0, width=20)
+        self.tree1.column('#2', stretch=NO, minwidth=0, width=180)
+        self.tree1.column('#3', stretch=NO, minwidth=0, width=120)
+        self.tree1.column('#4', stretch=NO, minwidth=0, width=80)
+
+        self.tree1.pack()
+        self.tree1.heading('Id', text="Id", anchor=W)
+        self.tree1.heading('Phòng khám', text="Phòng khám", anchor=W)
+        self.tree1.heading('Bác sĩ', text="Bác sĩ", anchor=W)
+        self.tree1.heading('Địa chỉ', text="Địa chỉ", anchor=W)
+        self.tree1.pack()
+
+        conn = sqlite3.connect("db_member.db")
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM `print_dt`")
+        fetch = cursor.fetchall()
+        for data in fetch:
+            self.tree1.insert('', 'end', values=(data))
+        cursor.close()
+        conn.close()
 
     def Deletedata_NewWindow(self):
         conn = sqlite3.connect("db_member.db")
@@ -793,14 +1108,20 @@ class Application:
        # # newWindowaddf.update()
        #  newWindowaddf.destroy()
        # root.withdraw()
+
         root.withdraw()
         root.destroy()
+        addWindow.destroy()
+
+        # newWindowaddf.withdraw()
+        # newWindowaddf.destroy()
         # root1.destroy()
         # root2.destroy
     def quit11(self):
-        # root.deiconify()
-        # root.update()
+
         addWindow.withdraw()
+        root.deiconify()
+        root.update()
         # root1.destroy()
         # root2.destroy()
     def quit22(self):
@@ -808,6 +1129,8 @@ class Application:
         # root.update()
 
         newWindowaddf.withdraw()
+        root.deiconify()
+        root.update()
         # root1.destroy()
         # root2.destroy()
 

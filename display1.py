@@ -107,18 +107,36 @@ class Application:
         # self.LABELKEY3.place(x=120, y=380)
         # self.name_keyK = Entry(self.leftkey, font=('arial 26 bold'), width=40)
         # self.name_keyK.place(x=150, y=430)
+
+        conn = sqlite3.connect("d.db")
+        conn.row_factory = sqlite3.Row
+
+        cur3 = conn.cursor()
+        cur3.execute("SELECT address FROM member")
+        rows3 = cur3.fetchall()
+
+        for row3 in rows3:
+            row3["address"]
+            # print(row3["address"])
+
         h1 = 'A88dH5e8867' + self.getserial()
         num1 = re.sub(r'\D', "", h1)
-        name_dtn1 = self.getserial()
         nux = int(num1)
-        n = len(name_dtn1) * nux
+        n = len(h1) * nux
         num = re.sub(r'\d', "", h1)
-        h22 = str(n) + str(num)
+
+        m2 = row3["address"]
+
+        n2 = len(m2) * nux
+        b = m2[1:3]
+
+        h22 = str(n) + str(num) + str(b) + str(n2)
         USERNAME1 = h1
-        USERNAME2 = str(h22)
+        USERNAME2 = str(row3["address"])
+        USERNAME3= str(h22)
 
         cursorkey.execute("SELECT * FROM `member` WHERE `dt_id` = ? and `address` = ? and `key` = ?",
-                          (USERNAME1, USERNAME2, USERNAME2))
+                          (USERNAME1, USERNAME2, USERNAME3))
         if cursorkey.fetchone() is not None:
             self.master = master
             self.logic1 = 1
@@ -196,7 +214,7 @@ class Application:
     def database_1(self):
         h1 = 'A88dH5e8867' + self.getserial()
         name_dtn1 = h1
-        name_dtn222 = self.adr_actice.get()
+        name_dtn222 = self.adr_mail.get()
         name_dtn3 = self.adr_actice.get()
 
         conn = sqlite3.connect("d.db")

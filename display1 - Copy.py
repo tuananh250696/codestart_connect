@@ -29,16 +29,6 @@ import re
 # classes = []
 # with open("classes3.txt", "r") as f:
 #     classes = [line.strip() for line in f.readlines()]
-net = cv2.dnn.readNet("yolov3-tiny_final.weights", "yolov3Copy.cfg")
-classes = []
-with open("classes4.txt", "r") as f:
-    classes = [line.strip() for line in f.readlines()]
-layer_names = net.getLayerNames()
-output_layers = [layer_names[i[0] - 1] for i in net.getUnconnectedOutLayers()]
-colors = np.random.uniform(0, 255, size=(len(classes), 3))
-font = cv2.FONT_HERSHEY_PLAIN
-starting_time = time.time()
-frame_id = 0
 
 today = date.today()
 date = datetime.datetime.now().date()
@@ -75,47 +65,122 @@ USERNAME = StringVar()
 PASSWORD = StringVar()
 
 
-
 class Application:
     def __init__(self, master):
-        self.master = master
-        self.logic1 = 1
-        self.logic2 = 1
-        self.logic3 = 1
-        # frame
-        self.left = Frame(master, width=215, height=600, bg='white')
-        self.left.pack(side=LEFT)
-        # components
-        self.date_l = Label(self.left,
-                            text="Today's Date: " + str(today.day) + "-" + str(today.month) + "-" + str(today.year),
-                            font=('arial 12 bold'), bg='lightblue',
-                            fg='white')
-        self.date_l.place(x=10, y=0)
+        connkey = sqlite3.connect("d.db")
+        cursorkey = connkey.cursor()
 
-        # button
-        self.bt_st_catalog = Button(self.left, text="Hồ sơ bệnh nhân", width=16, height=4, font=('arial 14 bold'),
-                                    bg='orange', command=self.ajax)
-        self.bt_st_catalog.place(x=5, y=30)
+        # cursorkey.execute(
+        #     "CREATE TABLE IF NOT EXISTS `member` (mem_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, username TEXT, password TEXT, firstname TEXT, lastname TEXT)")
+        # self.leftkey = Frame(master,width=1000, height=550, bg='lightblue')
+        # self.leftkey.pack(side=LEFT)
+        # self.LABELKEY = Label( self.leftkey, text="WELL COME TO DEVICE BOSSCOM - INPUT KEY ACTIVE", font=('arial 20 bold'), fg='black',bg='lightblue')
+        # self.LABELKEY.place(x=150, y=60)
+        #
+        # self.LABELKEY1 = Label(self.leftkey, text="Mã ID THIẾT BỊ:",
+        #                       font=('arial 28 bold'), fg='black', bg='lightblue')
+        # self.LABELKEY1.place(x=120, y=110)
+        #
+        # self.name_key = Entry(self.leftkey, font=('arial 26 bold'), width=40)
+        # self.name_key.place(x=150, y=160)
+        #
+        # self.LABELKEY2 = Label(self.leftkey, text="ĐỊA CHỈ EMAIL:",
+        #                        font=('arial 28 bold'), fg='black', bg='lightblue')
+        # self.LABELKEY2.place(x=120, y=230)
+        # self.mail= Entry(self.leftkey, font=('arial 26 bold'), width=40)
+        # self.mail.place(x=150, y=280)
+        #
+        #
+        # self.LABELKEY3 = Label(self.leftkey, text="KEY ACTICE:",
+        #                        font=('arial 28 bold'), fg='black', bg='lightblue')
+        # self.LABELKEY3.place(x=120, y=380)
+        # self.name_keyK = Entry(self.leftkey, font=('arial 26 bold'), width=40)
+        # self.name_keyK.place(x=150, y=430)
+        h1 = 'A88dH5e8867' + self.getserial()
+        num1 = re.sub(r'\D', "", h1)
+        name_dtn1 = self.getserial()
+        nux = int(num1)
+        n = len(name_dtn1) * nux
+        num = re.sub(r'\d', "", h1)
+        h22 = str(n) + str(num)
+        USERNAME1 = h1
+        USERNAME2 = str(h22)
 
-        self.bt_st_form = Button(self.left, text="Nội soi", width=16, height=4, font=('arial 14 bold'), bg='orange',
-                                 command=self.endoscopy)  # get_itemsdatabase)
-        self.bt_st_form.place(x=5, y=136)
+        cursorkey.execute("SELECT * FROM `member` WHERE `dt_id` = ? and `address` = ? and `key` = ?",
+                          (USERNAME1, USERNAME2, USERNAME2))
+        if cursorkey.fetchone() is not None:
+            self.master = master
+            self.logic1 = 1
+            self.logic2 = 1
+            self.logic3 = 1
+            # frame
+            self.left = Frame(master, width=215, height=600, bg='white')
+            self.left.pack(side=LEFT)
+            # components
+            self.date_l = Label(self.left,
+                                text="Today's Date: " + str(today.day) + "-" + str(today.month) + "-" + str(today.year),
+                                font=('arial 12 bold'), bg='lightblue',
+                                fg='white')
+            self.date_l.place(x=10, y=0)
 
-        self.bt_patient = Button(self.left, text="Biểu mẫu in", width=16, height=4, font=('arial 14 bold'),
-                                 bg='orange',
-                                 command=self.add_to_bn)
-        self.bt_patient.place(x=5, y=242)
+            # button
+            self.bt_st_catalog = Button(self.left, text="Hồ sơ bệnh nhân", width=16, height=4, font=('arial 14 bold'),
+                                        bg='orange', command=self.ajax)
+            self.bt_st_catalog.place(x=5, y=30)
 
-        self.bt_endoscop = Button(self.left, text="Danh mục khám", width=16, height=4, font=('arial 14 bold'),
-                                  bg='orange', command=self.createNewWindow)
-        self.bt_endoscop.place(x=5, y=348)
+            self.bt_st_form = Button(self.left, text="Nội soi", width=16, height=4, font=('arial 14 bold'), bg='orange',
+                                     command=self.endoscopy)  # get_itemsdatabase)
+            self.bt_st_form.place(x=5, y=136)
 
-        self.bt_exit1 = Button(self.left, text="Thoát", width=16, height=4, font=('arial 14 bold'), bg='orange',
-                               command=self.quit)
-        self.bt_exit1.place(x=5, y=454)
+            self.bt_patient = Button(self.left, text="Biểu mẫu in", width=16, height=4, font=('arial 14 bold'),
+                                     bg='orange',
+                                     command=self.add_to_bn)
+            self.bt_patient.place(x=5, y=242)
 
-        addWindow.withdraw()
-        newWindowaddf.withdraw()
+            self.bt_endoscop = Button(self.left, text="Danh mục khám", width=16, height=4, font=('arial 14 bold'),
+                                      bg='orange', command=self.createNewWindow)
+            self.bt_endoscop.place(x=5, y=348)
+
+            self.bt_exit1 = Button(self.left, text="Thoát", width=16, height=4, font=('arial 14 bold'), bg='orange',
+                                   command=self.quit)
+            self.bt_exit1.place(x=5, y=454)
+
+            addWindow.withdraw()
+            newWindowaddf.withdraw()
+
+        else:
+            h1 = 'A88dH5e8867' + self.getserial()
+            self.left = Frame(root, width=1000, height=580, bg='lightblue')
+            self.left.pack(side=LEFT)
+            # components
+            self.keyactive = Label(self.left, text="MÃ ID THIẾT BỊ:", font=('arial 12 bold'), fg='black',
+                                   bg='lightblue')
+            self.keyactive.place(x=50, y=40)
+
+            self.adr_id = Text(root, height=1, width=40, bg="light yellow", font=('arial 20 bold'), fg='red')
+            self.adr_id.place(x=60, y=100)
+            self.adr_id.insert(END, h1)
+
+            self.keymail = Label(self.left, text="Địa chỉ mail:", font=('arial 12 bold'), fg='black', bg='lightblue')
+            self.keymail.place(x=50, y=150)
+            self.adr_mail = Entry(self.left, font=('arial 20 bold'), width=40)
+            self.adr_mail.place(x=60, y=210)
+
+            self.keyacticett = Label(self.left, text="Key Actice:", font=('arial 12 bold'), fg='black', bg='lightblue')
+            self.keyacticett.place(x=50, y=260)
+            self.adr_actice = Entry(self.left, font=('arial 20 bold'), width=40)
+            self.adr_actice.place(x=60, y=310)
+
+            # button
+            self.bt_st_catalog = Button(self.left, text="Cập Nhật Mã Active", width=20, height=4,
+                                        font=('arial 14 bold'), bg='orange', command=self.database_1)
+            self.bt_st_catalog.place(x=100, y=420)
+
+            self.bt_exit1 = Button(self.left, text="Đóng", width=20, height=4, font=('arial 14 bold'), bg='orange',
+                                   command=self.quitdd)
+            self.bt_exit1.place(x=355, y=420)
+            addWindow.withdraw()
+            newWindowaddf.withdraw()
 
     def database_1(self):
         h1 = 'A88dH5e8867' + self.getserial()
@@ -137,9 +202,9 @@ class Application:
             tkinter.messagebox.showinfo("Success", "Đã ACtice")
             conn.commit()
             cursor.close()
+    #  root.withdraw()
 
     # def quit(self):
-    #  root.withdraw()
     # root.destroy()
     def getserial(self):
         # Extract serial from cpuinfo file
@@ -1595,6 +1660,7 @@ class Application:
                 self.value2 = 0
                 self.valueh = 5
                 self.valuem = 11
+                self.valuea = 1
                 self.setupUi(self)  # ++
                 self.CAPTURE.clicked.connect(self.capture_image)
                 self.NEXT_3.clicked.connect(self.window2)
@@ -1604,8 +1670,9 @@ class Application:
                 self.camera_selector.addItem("  CAMERA USB3.0")
                 # self.camera_selector.add Items([camera.description()
                 #                                for camera in self.available_cameras])
-                self.camera_selector1.addItem("   Chụp Tự Động")
-                self.camera_selector1.addItem("  Chụp Thủ Công")
+                self.camera_selector1.addItem("  Chụp Thủ Công ")
+                self.camera_selector1.addItem("  Chụp Tự Động")
+                self.camera_selector.currentIndexChanged.connect(self.select_camera)
                 # self.camera_selector.stateChanged.connect(self.select_camera)
 
                 self.NEXT_7.clicked.connect(self.w1)
@@ -1637,6 +1704,10 @@ class Application:
                 # self.imgLabel.setText("No Single")
 
             @QtCore.pyqtSlot()
+            def select_camera(self):
+
+                print()
+
             def update_frame(self):
                 ret, image = self.cap.read()
                 # Define the codec and create VideoWriter object
@@ -1648,144 +1719,6 @@ class Application:
                     # image = cv2.flip(image, 1)
                     # frame1 = cv2.resize(image, (416, 416))
                     frame2 = cv2.resize(image, (200, 150))
-                    # frame1 = imutils.resize(image, width=640, height=480)
-                    # (H, W) = frame1.shape[:2]
-                    height, width, channels = image.shape
-                    # Detecting objects
-                    blob = cv2.dnn.blobFromImage(image, 0.00392, (416, 416), (0, 0, 0), True, crop=False)
-                    #  blob = cv2.dnn.blobFromImage(image, 0.00392, (320,224), (0, 0, 0), True, crop=False)
-                    net.setInput(blob)
-                    outs = net.forward(output_layers)
-                    # Showing informations on the screen
-                    class_ids = []
-                    confidences = []
-                    boxes = []
-
-                    for out in outs:
-                        for detection in out:
-                            scores = detection[5:]
-                            class_id = np.argmax(scores)
-                            confidence = scores[class_id]
-                            if confidence > 0.78:
-                                # Object detected
-                                center_x = int(detection[0] * width)
-                                center_y = int(detection[1] * height)
-                                w = int(detection[2] * width)
-                                h = int(detection[3] * height)
-                                # Rectangle coordinates
-                                x = int(center_x - w / 2)
-                                y = int(center_y - h / 2)
-                                boxes.append([x, y, w, h])
-                                confidences.append(float(confidence))
-                                class_ids.append(class_id)
-                    indexes = cv2.dnn.NMSBoxes(boxes, confidences, 0.4, 0.3)
-                    for i in range(len(boxes)):
-                        if i in indexes:
-                            label = str(classes[class_ids[i]])
-                            # cv2.putText(image, label , (20,20), font, 2,(255, 255, 255), 2)
-                            # print(label)
-                            # print(class_ids[i])
-                            confidence = confidences[i]
-                            # color = colors[class_ids[i]]
-                            cv2.putText(image, label + " " + str(round(confidence, 2)), (x, y + 30), font, 3,
-                                        (255, 255, 255), 3)
-                            # elapsed_time = time.time() - starting_time
-                            # fps = frame_id / elapsed_time
-                            # cv2.putText(image, "FPS: " + str(round(fps, 2)), (10, 50), font, 3, (0, 0, 255), 3)
-
-                            if self.value < 6 and class_ids[i] == 0:
-                                self.value = self.value + 1
-                                conn = sqlite3.connect("db_member.db")
-                                conn.row_factory = sqlite3.Row
-                                cur = conn.cursor()
-                                cur.execute("SELECT max(id) FROM member")
-                                rows = cur.fetchall()
-                                directory = "anh/"
-                                if not os.path.exists(directory):
-                                    os.makedirs(directory)
-                                for row in rows:
-                                    row["max(id)"]
-                                cv2.imwrite('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.value)), frame2)
-                                # self.TEXT.setText('your Image have been Saved')
-                                self.label = QLabel(self)
-
-                                self.it.setIcon(
-                                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.value))))
-                                self.it1.setIcon(
-                                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.value))))
-                                self.it2.setIcon(
-                                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.value))))
-                                self.it3.setIcon(
-                                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.value))))
-                                self.it4.setIcon(
-                                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.value))))
-                                self.it5.setIcon(
-                                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.value))))
-
-                                self.TEXT.setText('anh/%s.png' % (label) + str(self.value))
-
-                            if self.valueh < 12 and class_ids[i] == 1:
-                                self.valueh = self.valueh + 1
-                                conn = sqlite3.connect("db_member.db")
-                                conn.row_factory = sqlite3.Row
-                                cur = conn.cursor()
-                                cur.execute("SELECT max(id) FROM member")
-                                rows = cur.fetchall()
-                                directory = "anh/"
-                                if not os.path.exists(directory):
-                                    os.makedirs(directory)
-                                for row in rows:
-                                    row["max(id)"]
-                                cv2.imwrite('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valueh)), frame2)
-                                # self.TEXT.setText('your Image have been Saved')
-                                self.label = QLabel(self)
-
-                                self.it6.setIcon(
-                                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valueh))))
-                                self.it7.setIcon(
-                                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valueh))))
-                                self.it8.setIcon(
-                                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valueh))))
-                                self.it9.setIcon(
-                                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valueh))))
-                                self.it10.setIcon(
-                                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valueh))))
-                                self.it11.setIcon(
-                                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valueh))))
-
-                                self.TEXT.setText('anh/%s.png' % (label) + str(str(self.valueh)))
-
-                            if self.valuem < 18 and class_ids[i] == 2:
-                                self.valuem = self.valuem + 1
-                                conn = sqlite3.connect("db_member.db")
-                                conn.row_factory = sqlite3.Row
-                                cur = conn.cursor()
-                                cur.execute("SELECT max(id) FROM member")
-                                rows = cur.fetchall()
-                                directory = "anh/"
-                                if not os.path.exists(directory):
-                                    os.makedirs(directory)
-                                for row in rows:
-                                    row["max(id)"]
-                                cv2.imwrite('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valuem)), frame2)
-                                # self.TEXT.setText('your Image have been Saved')
-                                self.label = QLabel(self)
-
-                                self.it12.setIcon(
-                                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valuem))))
-                                self.it13.setIcon(
-                                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valuem))))
-                                self.it14.setIcon(
-                                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valuem))))
-                                self.it15.setIcon(
-                                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valuem))))
-                                self.it16.setIcon(
-                                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valuem))))
-                                self.it17.setIcon(
-                                    QtGui.QIcon('anh/%s.png' % ("a" + str(row["max(id)"]) + "a" + str(self.valuem))))
-
-                                self.TEXT.setText('anh/%s.png' % (label) + str(self.valuem))
-
                     self.displayImage(image, True)
                 else:
                     self.cap.release()
@@ -1855,8 +1788,8 @@ class Application:
 
             def window2(self):  # <===
                 self.w = Window2()
-                #                 self.w.(True)
                 self.w.show()
+                # self.w1()
 
             def displayImage(self, img, window=True):
                 qformat = QtGui.QImage.Format_Indexed8
@@ -1892,4 +1825,5 @@ app = QApplication(sys.argv)
 root.geometry("1024x600+0+0")
 b = Application(root)
 root.mainloop()
+
 

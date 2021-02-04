@@ -53,7 +53,7 @@ product_id = []
 root = Tk()
 # root1 = Tk()
 # root2 = Tk()
-root.overrideredirect(True)
+# root.overrideredirect(True)
 root.title("COMPANY BOSSCCOM")
 newWindowaddf = Toplevel(root)
 newWindowaddf.title("add infomation")
@@ -73,7 +73,6 @@ c1 = StringVar()
 logic1 = 1
 USERNAME = StringVar()
 PASSWORD = StringVar()
-
 
 
 class Application:
@@ -158,6 +157,7 @@ class Application:
 
             addWindow.withdraw()
             newWindowaddf.withdraw()
+
         else:
             h1 = 'A88dH5e8867' + self.getserial()
             self.left = Frame(root, width=1000, height=580, bg='lightblue')
@@ -503,6 +503,8 @@ class Application:
 
             self.rightw2.destroy()
             self.rightw3.destroy()
+            addWindow.update()
+            addWindow.deiconify()
             self.rightw2 = Frame(addWindow, width=550, height=600, bg='lightblue')
             self.rightw2.pack(side=RIGHT)
             self.rightw3 = Frame(addWindow, width=600, height=600, bg='lightblue')
@@ -632,6 +634,8 @@ class Application:
             self.rightw222.destroy()
             self.rightw444.destroy()
             self.rightw333.destroy()
+            newWindowaddf.update()
+            newWindowaddf.deiconify()
 
             self.rightw222 = Frame(newWindowaddf, width=205, height=500, bg='lightblue')
             self.rightw222.pack(side=RIGHT)
@@ -767,6 +771,8 @@ class Application:
             self.rightw222.destroy()
             self.rightw444.destroy()
             self.rightw333.destroy()
+            newWindowaddf.update()
+            newWindowaddf.deiconify()
 
             self.rightw222 = Frame(newWindowaddf, width=205, height=500, bg='lightblue')
             self.rightw222.pack(side=RIGHT)
@@ -901,7 +907,8 @@ class Application:
             cursor.close()
 
     def createNewWindow(self, *args, **kwargs):
-        root.withdraw()
+        # root.withdraw()
+
         newWindowaddf.update()
         newWindowaddf.deiconify()
         self.rightw222 = Frame(newWindowaddf, width=205, height=500, bg='lightblue')
@@ -1007,7 +1014,9 @@ class Application:
         # # root.withdraw()
 
     def add_to_bn(self, *args, **kwargs):
-        root.withdraw()
+        # root.withdraw()
+
+
         addWindow.update()
         addWindow.deiconify()
         self.rightw2 = Frame(addWindow, width=550, height=600, bg='lightblue')
@@ -1118,19 +1127,24 @@ class Application:
         # root1.destroy()
         # root2.destroy
     def quit11(self):
+        self.rightw2.destroy()
+        self.rightw3.destroy()
 
         addWindow.withdraw()
-        root.deiconify()
-        root.update()
+        # root.deiconify()
+        # root.update()
         # root1.destroy()
         # root2.destroy()
     def quit22(self):
         # root.deiconify()
         # root.update()
+        self.rightw222.destroy()
+        self.rightw444.destroy()
+        self.rightw333.destroy()
 
         newWindowaddf.withdraw()
-        root.deiconify()
-        root.update()
+        # root.deiconify()
+        # root.update()
         # root1.destroy()
         # root2.destroy()
 
@@ -1656,6 +1670,7 @@ class Application:
                 self.value2 = 0
                 self.valueh = 5
                 self.valuem = 11
+                self.valuea = 1
                 self.setupUi(self)  # ++
                 self.CAPTURE.clicked.connect(self.capture_image)
                 self.NEXT_3.clicked.connect(self.window2)
@@ -1665,8 +1680,9 @@ class Application:
                 self.camera_selector.addItem("  CAMERA USB3.0")
                 # self.camera_selector.add Items([camera.description()
                 #                                for camera in self.available_cameras])
-                self.camera_selector1.addItem("   Chụp Tự Động")
-                self.camera_selector1.addItem("  Chụp Thủ Công")
+                self.camera_selector1.addItem("  Chụp Thủ Công ")
+                self.camera_selector1.addItem("  Chụp Tự Động")
+                self.camera_selector.currentIndexChanged.connect(self.select_camera)
                 # self.camera_selector.stateChanged.connect(self.select_camera)
 
                 self.NEXT_7.clicked.connect(self.w1)
@@ -1698,6 +1714,10 @@ class Application:
                 # self.imgLabel.setText("No Single")
 
             @QtCore.pyqtSlot()
+            def select_camera(self):
+
+                print()
+
             def update_frame(self):
                 ret, image = self.cap.read()
                 # Define the codec and create VideoWriter object
@@ -1916,8 +1936,8 @@ class Application:
 
             def window2(self):  # <===
                 self.w = Window2()
-                #                 self.w.(True)
                 self.w.show()
+                # self.w1()
 
             def displayImage(self, img, window=True):
                 qformat = QtGui.QImage.Format_Indexed8
@@ -1953,4 +1973,3 @@ app = QApplication(sys.argv)
 root.geometry("1024x600+0+0")
 b = Application(root)
 root.mainloop()
-

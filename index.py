@@ -1,89 +1,211 @@
-from tkinter import *
-import sqlite3
-import tkinter.messagebox
-# import sys
-# from PyQt5.QtWidgets import *
+from PyQt5 import QtCore, QtGui, QtWidgets
 
-#w = root.winfo_screenwidth()
-#h = root.winfo_screenheight()f
-root = Tk()
-root.title("COMPANY BOSSCCOM")
-width = 640
-height = 480
-screen_width = root.winfo_screenwidth()
-screen_height = root.winfo_screenheight()
-x = (screen_width/2) - (width/2)
-y = (screen_height/2) - (height/2)
-root.geometry("%dx%d+%d+%d" % (width, height, x, y))
-root.resizable(0, 0)
+class Ui_Form(object):
+    def setupUi(self, Dialog):
+        Dialog.setObjectName("Dialog")
+        Dialog.resize(1024, 600)
+        self.TEXT = QtWidgets.QTextBrowser(Dialog)
+        self.TEXT.setGeometry(QtCore.QRect(890, 30, 131, 81))
+        self.TEXT.setObjectName("TEXT")
+        self.imgLabel = QtWidgets.QLabel(Dialog)
+        self.imgLabel.setGeometry(QtCore.QRect(275, 115, 743, 483))
+        # self.imgLabel.setAutoFillBackgrouind(False)
+        self.imgLabel.setFrameShape(QtWidgets.QFrame.Box)
+        self.imgLabel.setText("")
+        self.imgLabel.setObjectName("imgLabel")
 
-#=======================================VARIABLES=====================================
-# USERNAME = StringVar()
-# PASSWORD = StringVar()
-# FIRSTNAME = StringVar()
-# LASTNAME = StringVar()
+        self.CAPTURE = QtWidgets.QPushButton(Dialog)
+        self.CAPTURE.setGeometry(QtCore.QRect(200, 30, 181, 81))
+        self.CAPTURE.setObjectName("CAPTURE")
 
+        self.imgLabel_2 = QtWidgets.QLabel(Dialog)
+        self.imgLabel_2.setGeometry(QtCore.QRect(0, 0, 1922, 30))
+        self.imgLabel_2.setAutoFillBackground(False)
+        self.imgLabel_2.setFrameShape(QtWidgets.QFrame.Box)
+        self.imgLabel_2.setText("")
+        self.imgLabel_2.setPixmap(QtGui.QPixmap("ngang1.png"))
+        self.imgLabel_2.setObjectName("imgLabel_2")
+        # creating a combo box for selecting camera
+        self.NEXT_3c = QtWidgets.QPushButton(Dialog)
+        self.NEXT_3c.setGeometry(QtCore.QRect(550, 30, 171, 81))
+        self.NEXT_3c.setObjectName("NEXT_3")
+        # self.camera_selector1 = QtWidgets.QComboBox(Dialog)
+        # self.camera_selector1.setGeometry(QtCore.QRect(550, 30, 171, 81))
+        # adding status tip to it
+        # self.camera_selector1.addItems("TỰ động chụp")
+        # self.camera_selector1.setToolTip("TỰ động chụp")
 
-class Application:
-    def __init__(self, master):
-        self.master = master
-        self.logic1 = 1
-        # frame
-        self.left = Frame(master, width=1000, height=580, bg='lightblue')
-        self.left.pack(side=LEFT)
-        # components
-        self.keyactive = Label(self.left, text="MÃ ID THIẾT BỊ:", font=('arial 12 bold'), fg='black',
-                                 bg='lightblue')
-        self.keyactive.place(x=50, y=40)
+        # creating a combo box for selecting camera
+        self.camera_selector = QtWidgets.QComboBox(Dialog)
+        self.camera_selector.setGeometry(QtCore.QRect(0, 30, 201, 81))
+        # adding status tip to it
+        self.camera_selector.setStatusTip("Choose camera to take pictures")
 
-        self.adr_id = Entry(self.left, font=('arial 20 bold'), width=40)
-        self.adr_id.place(x=60, y=100)
+        # adding tool tip to it
+        self.camera_selector.setToolTip("Select Camera")
+        self.camera_selector.setToolTipDuration(2500)
 
-        self.keymail = Label(self.left, text="Địa chỉ mail:", font=('arial 12 bold'), fg='black',
-                                 bg='lightblue')
-        self.keymail.place(x=50, y=150)
-        self.adr_mail = Entry(self.left, font=('arial 20 bold'), width=40)
-        self.adr_mail.place(x=60, y=210)
+        self.NEXT_3 = QtWidgets.QPushButton(Dialog)
+        self.NEXT_3.setGeometry(QtCore.QRect(380, 30, 171, 81))
+        self.NEXT_3.setObjectName("NEXT_3")
+        self.NEXT_7 = QtWidgets.QPushButton(Dialog)
+        self.NEXT_7.setGeometry(QtCore.QRect(720, 30, 171, 81))
+        self.NEXT_7.setObjectName("NEXT_7")
 
-        self.keyacticett = Label(self.left, text="Key Actice:", font=('arial 12 bold'), fg='black',
-                                 bg='lightblue')
-        self.keyacticett.place(x=50, y=260)
-        self.adr_actice = Entry(self.left, font=('arial 20 bold'), width=40)
-        self.adr_actice.place(x=60, y=310)
+        self.listWidget = QtWidgets.QListWidget(Dialog)
+        self.listWidget.setGeometry(QtCore.QRect(2, 115, 270, 475))#(2, 115, 213, 475))
+        self.listWidget.setObjectName("ListWidgetItem")
+        self.listWidget.setIconSize(QtCore.QSize(230, 170))
+        self.listWidget.setResizeMode(QtWidgets.QListView.Adjust)
+        self.listWidget.setFlow(QtWidgets.QListView.TopToBottom)
 
-        # button
-        self.bt_st_catalog = Button(self.left, text="Cập Nhật Mã Active", width=20, height=4, font=('arial 14 bold'),
-                                    bg='orange',command=self.database_1)
-        self.bt_st_catalog.place(x=100, y=420)
+        # self.camera_selector3 = QtWidgets.QComboBox(self.listWidget)
+        # self.camera_selector3.setGeometry(QtCore.QRect(2, 2, 220, 60))
 
-        self.bt_exit1 = Button(self.left, text="Đóng", width=20, height=4, font=('arial 14 bold'), bg='orange', command=self.quit)
-        self.bt_exit1.place(x=355, y=420)
+        # self.item = QListWidgetItem("1 Image        ")
+        # font = QFont('Times', 18)
+        # self.item.setFont(font)
+        # self.item.setCheckState(QtCore.Qt.Unchecked)
+        #item.setCheckState(True)
+        #item.setCheckStateQtCore.QSize
+        #item.setCheckState(QtCore.QSize(50,50))
+        # self.listWidget.addItem(self.item)
+        self.it  = QtWidgets.QListWidgetItem(self.listWidget)
+#        self.item.clicked.connect(self.w1)
 
+        # self.item1 = QListWidgetItem("2 Image")
+        # self.item1.setFont(font)
+        # self.item1.setCheckState(QtCore.Qt.Unchecked)
+        # self.item1.setCheckState(False)
+        # self.listWidget.addItem(self.item1)
+        self.it1 = QtWidgets.QListWidgetItem(self.listWidget)
 
-    def database_1(self):
-        name_dtn1 = self.adr_id.get()
-        name_dtn222 =  self.adr_mail.get()
-        name_dtn3 =  self.adr_actice.get()
+        # self.item2 = QListWidgetItem("3 Image")
+        # self.item2.setFont(font)
+        # self.item2.setCheckState(Qt.Checked)
+        # self.item2.setCheckState(False)
+        # self.listWidget.addItem(self.item2)
+        self.it2 = QtWidgets.QListWidgetItem(self.listWidget)
 
-        conn = sqlite3.connect("d.db")
-        cursor = conn.cursor()
-        if name_dtn222 == '' or name_dtn1 == "" or name_dtn3 == "":
-            tkinter.messagebox.showinfo("Error", "Điền đầy đủ thông tin.")
-        else:
-            # n=len(name_dtn222)+25061996
-            # print(n)
-            cursor.execute("DELETE FROM member WHERE id=1")
-            cursor.execute('CREATE TABLE IF NOT EXISTS member (dt_id TEXT,address TEXT,key TEXT)')
-            cursor.execute('INSERT INTO member (dt_id,address,key) VALUES(?,?,?)',
-                           ( name_dtn1,name_dtn222,name_dtn3))
-            tkinter.messagebox.showinfo("Success", "Đã ACtice")
-            conn.commit()
-            cursor.close()
+        # self.item3 = QListWidgetItem("4 Image")
+        # self.item3.setFont(font)
+        # self.item3.setCheckState(Qt.Checked)
+        # self.item3.setCheckState(False)
+        # self.listWidget.addItem(self.item3)
+        self.it3 = QtWidgets.QListWidgetItem(self.listWidget)
 
-    def quit(self):
-        root.withdraw()
-        root.destroy()
+        # self.item4 = QListWidgetItem("5 Image")
+        # self.item4.setFont(font)
+        # self.item4.setCheckState(Qt.Checked)
+        # self.item4.setCheckState(False)
+        # self.listWidget.addItem(self.item4)
+        self.it4 = QtWidgets.QListWidgetItem(self.listWidget)
 
-root.geometry("1024x600+0+0")
-b = Application(root)
-root.mainloop()
+        # self.item5 = QListWidgetItem("6 Image")
+        # self.item5.setFont(font)
+        # self.item5.setCheckState(Qt.Checked)
+        # self.item5.setCheckState(False)
+        # self.listWidget.addItem(self.item5)
+        self.it5 = QtWidgets.QListWidgetItem(self.listWidget)
+
+        # self.item6 = QListWidgetItem("7 Image")
+        # self.item6.setFont(font)
+        # self.item6.setCheckState(Qt.Checked)
+        # self.item6.setCheckState(False)
+        # self.listWidget.addItem(self.item6)
+        self.it6 = QtWidgets.QListWidgetItem(self.listWidget)
+
+        # self.item7 = QListWidgetItem("8 Image")
+        # self.item7.setFont(font)
+        # self.item7.setCheckState(Qt.Checked)
+        # self.item7.setCheckState(False)
+        # self.listWidget.addItem(self.item7)
+        self.it7 = QtWidgets.QListWidgetItem(self.listWidget)
+
+        # self.item8 = QListWidgetItem("9 Image")
+        # self.item8.setFont(font)
+        # self.item8.setCheckState(Qt.Checked)
+        # self.item8.setCheckState(False)
+        # self.listWidget.addItem(self.item8)
+        self.it8 = QtWidgets.QListWidgetItem(self.listWidget)
+
+        # self.item9 = QListWidgetItem("10 Image")
+        # self.item9.setFont(font)
+        # self.item9.setCheckState(Qt.Checked)
+        # self.item9.setCheckState(False)
+        # self.listWidget.addItem(self.item9)
+        self.it9 = QtWidgets.QListWidgetItem(self.listWidget)
+
+        # self.item10 = QListWidgetItem("11 Image")
+        # self.item10.setFont(font)
+        # self.item10.setCheckState(Qt.Checked)
+        # self.item10.setCheckState(False)
+        # self.listWidget.addItem(self.item10)
+        self.it10 = QtWidgets.QListWidgetItem(self.listWidget)
+
+        # self.item11 = QListWidgetItem("12 Image")
+        # self.item11.setFont(font)
+        # self.item11.setCheckState(Qt.Checked)
+        # self.item11.setCheckState(False)
+        # self.listWidget.addItem(self.item11)
+        self.it11 = QtWidgets.QListWidgetItem(self.listWidget)
+
+        # self.item12 = QListWidgetItem("13 Image")
+        # self.item12.setFont(font)
+        # self.item12.setCheckState(Qt.Checked)
+        # self.item12.setCheckState(False)
+        # self.listWidget.addItem(self.item12)
+        self.it12 = QtWidgets.QListWidgetItem(self.listWidget)
+
+        # self.item13 = QListWidgetItem("14 Image")
+        # self.item13.setFont(font)
+        # self.item13.setCheckState(Qt.Checked)
+        # self.item13.setCheckState(False)
+        # self.listWidget.addItem(self.item13)
+        self.it13 = QtWidgets.QListWidgetItem(self.listWidget)
+
+        # self.item14 = QListWidgetItem("15 Image")
+        # self.item14.setFont(font)
+        # self.item14.setCheckState(Qt.Checked)
+        # self.item14.setCheckState(False)
+        # self.listWidget.addItem(self.item14)
+        self.it14 = QtWidgets.QListWidgetItem(self.listWidget)
+
+        # self.item15 = QListWidgetItem("16 Image")
+        # self.item15.setFont(font)
+        # self.item15.setCheckState(Qt.Checked)
+        # self.item15.setCheckState(False)
+        # self.listWidget.addItem(self.item15)
+        self.it15 = QtWidgets.QListWidgetItem(self.listWidget)
+
+        # self.item16 = QListWidgetItem("17 Image")
+        # self.item16.setFont(font)
+        # self.item16.setCheckState(Qt.Checked)
+        # self.item16.setCheckState(False)
+        # self.listWidget.addItem(self.item16)
+        self.it16 = QtWidgets.QListWidgetItem(self.listWidget)
+
+        # self.item17 = QListWidgetItem("18 Image")
+        # self.item17.setFont(font)
+        # self.item17.setCheckState(Qt.Checked)
+        # self.item17.setCheckState(False)
+        # self.listWidget.addItem(self.item17)
+        self.it17 = QtWidgets.QListWidgetItem(self.listWidget)
+
+        self.TEXT.raise_()
+        self.imgLabel.raise_()
+        #         self.checkBox_4.raise_()
+
+        self.imgLabel_2.raise_()
+        self.CAPTURE.raise_()
+        self.NEXT_3.raise_()
+        self.NEXT_3c.raise_()
+        self.NEXT_7.raise_()
+
+        _translate = QtCore.QCoreApplication.translate
+        Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
+        self.CAPTURE.setText(_translate("Dialog", "Chụp Ảnh"))
+        self.NEXT_3.setText(_translate("Dialog", "Chẩn Đoán"))
+        self.NEXT_3c.setText(_translate("Dialog", "Chụp ảnh thủ công"))
+        self.NEXT_7.setText(_translate("Dialog", "Đóng"))
+

@@ -30,7 +30,7 @@ class Application:
                                  bg='lightblue')
         self.keyactive.place(x=50, y=40)
 
-        self.adr_id = Entry(self.left, font=('arial 20 bold'), width=40,fg='red')
+        self.adr_id = Entry(self.left, font=('arial 20 bold'), width=40)
         self.adr_id.place(x=60, y=100)
 
         self.keymail = Label(self.left, text="Địa chỉ mail:", font=('arial 12 bold'), fg='black',
@@ -56,59 +56,26 @@ class Application:
         # self.getserial()
         #print(self.getserial())
         #self.adr_actice.insert(END,self.getserial())
-        hh1 = str('A88dH5e8867'+self.getserial())
-        #self.adr_id.insert(END,hh1)
     def quit(self):
         root.withdraw()
         root.destroy()
 
     def Take_input(self):
-        #name_dtn1 = self.adr_id.get()
         # self.adr_actice.delete(0, END)
-        h1 = 'A88dH5e8867'+self.getserial()
-        num1 = re.sub(r'\D', "", h1)
-        name_dtn1 = self.getserial()
-        nux=int(num1)
-        n =  len(name_dtn1) * nux
-        num = re.sub(r'\d', "", h1)
-        h22= str(n)+str(num)
-        
+        name_dtn = self.adr_id.get()
+        name_dtn2 = self.adr_mail.get()
+        num1 = re.sub(r'\D', "", name_dtn )
+        nux = int(num1)
+        n = len( name_dtn) * nux
+
+        num = re.sub(r'\d', "",name_dtn )
+        n2 = len(name_dtn2) * nux
+        b = name_dtn2[1:3]
+        h22 = str(n) + str(num) + str(b) + str(n2)
         self.adr_actice.insert(END,h22)
 
-        # INPUT = inputtxt.get("1.0", "end-1c")
-        # print(INPUT)
-        # if (INPUT == "120"):
-        #     Output.insert(END, 'Correct')
-        # else:
-        #     Output.insert(END, "Wrong answer")
-    def getserial(self):
-        # Extract serial from cpuinfo file
-        cpuserial = "0000000000000000"
-        try:
-            f = open('/proc/cpuinfo', 'r')
-            for line in f:
-                if line[0:6] == 'Serial':
-                    cpuserial = line[10:26]
-                    # print(cpuserial)
-            # print(cpuserial)
-            f.close()
-        except:
-            cpuserial = "ERROR000000000"
 
-        return cpuserial
-
-           #  self.leftkey = Frame(root, width=1000, height=550, bg='lightblue')
-           #  self.leftkey.pack(side=LEFT)
-           #  self.LABELKEY = Label(self.leftkey, text="XIN VUI LÒNG ĐIỀN MÃ ACTICE TRƯỚC KHI SỬ DỤNG",
-        #                       font=('arial 24 bold'), fg='red', bg='lightblue')
-           #  self.LABELKEY.place(x=50, y=250)
-           #  self.LABELKEY22 = Label(self.leftkey, text="LIỆN HỆ TRỢ GIÚP : BOSSCOM COMPANY",
-           #                        font=('arial 16 bold'), fg='red', bg='lightblue')
-           #  self.LABELKEY22.place(x=120, y=300)
-
-
-        # self.name_key.focus()
-      #  self.LoginForm()
 root.geometry("1024x600+0+0")
 b = Application(root)
 root.mainloop()
+

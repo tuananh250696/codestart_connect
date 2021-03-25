@@ -2,6 +2,7 @@ from tkinter import *
 import sqlite3
 import tkinter as tk
 import tkinter.messagebox
+#from tkinter_custom_button import TkinterCustomButton
 from datetime import date
 from tkinter import ttk
 import datetime
@@ -32,7 +33,6 @@ import re
 net = cv2.dnn.readNet("yolov3-tiny_final.weights", "yolov3Copy.cfg")
 classes = []
 with open("classes4.txt", "r") as f:
-    
     classes = [line.strip() for line in f.readlines()]
 layer_names = net.getLayerNames()
 output_layers = [layer_names[i[0] - 1] for i in net.getUnconnectedOutLayers()]
@@ -74,6 +74,40 @@ c1 = StringVar()
 logic1 = 1
 USERNAME = StringVar()
 PASSWORD = StringVar()
+n = tk.StringVar()
+n1 = tk.StringVar()
+
+class AutocompleteEntry(Entry):
+
+    def set_completion_list(self, completion_list):
+        self._completion_list = completion_list
+        self._hits = []
+        self._hit_index = 0
+        self.position = 0
+        self.bind('<KeyRelease>', self.handle_keyrelease)
+
+    def autocomplete(self, delta=0):
+        if delta:
+            self.delete(self.position,END)
+        else:
+            self.position = len(self.get())
+        _hits = []
+        for element in self._completion_list:
+            if element.startswith(self.get().lower()):
+                _hits.append(element)
+                if _hits != self._hits:
+                        self._hit_index = 0
+                        self._hits=_hits
+        if _hits == self._hits and self._hits:
+                self._hit_index = (self._hit_index + delta) % len(self._hits)
+        if self._hits:
+                self.delete(0,END)
+                self.insert(0,self._hits[self._hit_index])
+                self.select_range(self.position,END)
+
+    def handle_keyrelease(self, event):
+        if len(event.keysym)== 1:
+            self.autocomplete()
 
 
 class Application:
@@ -81,36 +115,44 @@ class Application:
         connkey = sqlite3.connect("d.db")
         cursorkey = connkey.cursor()
 
-        conn = sqlite3.connect("d.db")
-        conn.row_factory = sqlite3.Row
-
-        cur3 = conn.cursor()
-        cur3.execute("SELECT address FROM member")
-        rows3 = cur3.fetchall()
-
-        for row3 in rows3:
-            row3["address"]
-            # print(row3["address"])
-
+        # cursorkey.execute(
+        #     "CREATE TABLE IF NOT EXISTS `member` (mem_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, username TEXT, password TEXT, firstname TEXT, lastname TEXT)")
+        # self.leftkey = Frame(master,width=1000, height=550, bg='lightblue')
+        # self.leftkey.pack(side=LEFT)
+        # self.LABELKEY = Label( self.leftkey, text="WELL COME TO DEVICE BOSSCOM - INPUT KEY ACTIVE", font=('arial 20 bold'), fg='black',bg='lightblue')
+        # self.LABELKEY.place(x=150, y=60)
+        #
+        # self.LABELKEY1 = Label(self.leftkey, text="Mã ID THIẾT BỊ:",
+        #                       font=('arial 28 bold'), fg='black', bg='lightblue')
+        # self.LABELKEY1.place(x=120, y=110)
+        #
+        # self.name_key = Entry(self.leftkey, font=('arial 26 bold'), width=40)
+        # self.name_key.place(x=150, y=160)
+        #
+        # self.LABELKEY2 = Label(self.leftkey, text="ĐỊA CHỈ EMAIL:",
+        #                        font=('arial 28 bold'), fg='black', bg='lightblue')
+        # self.LABELKEY2.place(x=120, y=230)
+        # self.mail= Entry(self.leftkey, font=('arial 26 bold'), width=40)
+        # self.mail.place(x=150, y=280)
+        #
+        #
+        # self.LABELKEY3 = Label(self.leftkey, text="KEY ACTICE:",
+        #                        font=('arial 28 bold'), fg='black', bg='lightblue')
+        # self.LABELKEY3.place(x=120, y=380)
+        # self.name_keyK = Entry(self.leftkey, font=('arial 26 bold'), width=40)
+        # self.name_keyK.place(x=150, y=430)
         h1 = 'A88dH5e8867' + self.getserial()
         num1 = re.sub(r'\D', "", h1)
+        name_dtn1 = self.getserial()
         nux = int(num1)
-        n = len(h1) * nux
+        n = len(name_dtn1) * nux
         num = re.sub(r'\d', "", h1)
-
-        m2 = row3["address"]
-
-        n2 = len(m2) * nux
-        b = m2[1:3]
-
-        h22 = str(n) + str(num) + str(b) + str(n2)
-        
+        h22 = str(n) + str(num)
         USERNAME1 = h1
-        USERNAME2 = str(row3["address"])
-        USERNAME3= str(h22)
+        USERNAME2 = str(h22)
 
         cursorkey.execute("SELECT * FROM `member` WHERE `dt_id` = ? and `address` = ? and `key` = ?",
-                          (USERNAME1, USERNAME2, USERNAME3))
+                          (USERNAME1, USERNAME2, USERNAME2))
         if cursorkey.fetchone() is not None:
             self.master = master
             self.logic1 = 1
@@ -127,9 +169,13 @@ class Application:
             self.date_l.place(x=10, y=0)
 
             # button
-            self.bt_st_catalog = Button(self.left, text="Hồ sơ bệnh nhân", width=16, height=4, font=('arial 14 bold'),
-                                        bg='orange', command=self.ajax)
-            self.bt_st_catalog.place(x=5, y=30)
+            #self.bt_st_catalog = Button(self.left, text="Hồ sơ bệnh nhân", width=16, height=4, font=('arial 14 bold'),
+            #                            bg='orange', command=self.ajax)
+            #self.bt_st_catalog.place(x=5, y=30)
+            
+            self.loginImg = PhotoImage(file="demo.png")
+            self.loginb = Button(self.left, image=self.loginImg, command=self.ajax, height=100, width=100)
+            self.loginb.place(x=5, y=30)
 
             self.bt_st_form = Button(self.left, text="Nội soi", width=16, height=4, font=('arial 14 bold'), bg='orange',
                                      command=self.endoscopy)  # get_itemsdatabase)
@@ -188,7 +234,7 @@ class Application:
     def database_1(self):
         h1 = 'A88dH5e8867' + self.getserial()
         name_dtn1 = h1
-        name_dtn222 = self.adr_mail.get()
+        name_dtn222 = self.adr_actice.get()
         name_dtn3 = self.adr_actice.get()
 
         conn = sqlite3.connect("d.db")
@@ -327,12 +373,27 @@ class Application:
 
             self.job = Label(self.bottom, text="Nghề nghiệp:", font=('arial 12 bold'), fg='black', bg='lightblue')
             self.job.place(x=330, y=5)
-            self.jobw = Entry(self.bottom, font=('arial 20 bold'), width=18)
-            self.jobw.place(x=320, y=30)
+            # self.jobw = Entry(self.bottom, font=('arial 20 bold'), width=18)
+            # self.jobw.place(x=320, y=30)
+            test_list = ('tự do', 'sinh viên', 'học sinh', 'nông dân', 'bác sĩ', 'kĩ sư', 'công nhân', 'kĩ sư', 'giáo viên', 'nội trợ', 'kinh doanh','nhân viên văn phòng', 'kế toán')
+
+            self.enter = AutocompleteEntry(self.bottom, font=('arial 20 bold'), width=16,textvariable=n)
+            self.enter.set_completion_list(test_list)
+            self.enter.place(x=320, y=30)
+
+
+            # self.m = ttk.Combobox(self.bottom, font=('arial 20 bold'), width=16,textvariable=n)
+            # self.m.place(x=320, y=30)
+            # self.m['values'] = ('tự do', 'nông dân', 'bác sĩ', 'kĩ sư', 'công nhân', 'kĩ sư', 'giáo viên', 'nội trợ', 'kinh doanh','nhân viên văn phòng', 'kế toán')
+
 
             self.st = Label(self.bottom, text="Triệu chứng:", font=('arial 12 bold'), fg='black', bg='lightblue')
             self.st.place(x=330, y=75)
-            self.stom = Entry(self.bottom, font=('arial 20 bold'), width=18)
+            # self.stom = Entry(self.bottom, font=('arial 20 bold'), width=18)
+            # self.stom.place(x=320, y=100)
+            test_list1 = ('ho','sổ mũi','đau họng','sốt','đau tai','ù tai','mất tiếng')
+            self.stom = AutocompleteEntry(self.bottom, font=('arial 20 bold'), width=16, textvariable=n1)
+            self.stom.set_completion_list(test_list1)
             self.stom.place(x=320, y=100)
 
             self.sbh = Label(self.bottom, text="Số bảo hiểm:", font=('arial 12 bold'), fg='black', bg='lightblue')
